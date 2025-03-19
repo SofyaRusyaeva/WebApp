@@ -1,9 +1,11 @@
-package com.example.WebApp.models;
+package com.example.WebApp.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -16,4 +18,7 @@ public class Brand {
 
     String name;
     String country;
+
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    List<Product> products;
 }

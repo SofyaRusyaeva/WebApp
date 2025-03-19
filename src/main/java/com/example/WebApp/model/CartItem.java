@@ -1,4 +1,4 @@
-package com.example.WebApp.models;
+package com.example.WebApp.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,7 +13,15 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long cartItemId;
-    Long cartId;
-    Long productId;
+    //Long cartId;
+    //Long productId;
     Long quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 }

@@ -1,9 +1,11 @@
-package com.example.WebApp.models;
+package com.example.WebApp.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -14,7 +16,14 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long cartId;
 
-    Long userId;
+    //Long userId;
 
     Long totalPrice;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    Users user;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    private List<CartItem> cartItems;
 }
