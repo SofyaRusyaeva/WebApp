@@ -56,12 +56,11 @@ public class Mapper {
         return orderItem;
     }
 
-    public Users toUsers(UsersDto dto, Cart cart) {
+    public Users toUsers(UsersDto dto) {
         Users user = new Users();
         user.setUserName(dto.getUserName());
         user.setPhone(dto.getPhone());
         user.setEmail(dto.getEmail());
-        user.setCart(cart);
         user.setPassword(dto.getPassword());
         return user;
     }

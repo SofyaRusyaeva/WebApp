@@ -1,14 +1,12 @@
 package com.example.WebApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
@@ -31,9 +29,4 @@ public class Users {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     Cart cart;
-
-    @JsonProperty("cartId")
-    public Long getCartId() {
-        return cart.getCartId();
-    }
 }

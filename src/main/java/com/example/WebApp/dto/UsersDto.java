@@ -8,5 +8,4 @@ public class UsersDto {
     String email;
     String password;
     String phone;
-    Long cartId;
 }
