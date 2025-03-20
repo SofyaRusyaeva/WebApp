@@ -1,5 +1,7 @@
 package com.example.WebApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,15 +19,21 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long orderId;
 
-    //Long userId;
     Long totalPrice;
     Date date;
     String status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private Users user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<OrderItem> orderItems;
+
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return user.getUserId();
+    }
 }

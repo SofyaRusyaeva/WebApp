@@ -1,5 +1,7 @@
 package com.example.WebApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -20,5 +22,7 @@ public class Brand {
     String country;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @JsonIgnore
     List<Product> products;
 }

@@ -1,5 +1,6 @@
 package com.example.WebApp.controller;
 
+import com.example.WebApp.dto.*;
 import com.example.WebApp.model.*;
 import com.example.WebApp.service.*;
 import lombok.AccessLevel;
@@ -60,37 +61,37 @@ public class TestController {
     }
 
     @PostMapping("/brand")
-    public ResponseEntity<Brand> addBrand(@RequestBody Brand brand) {
+    public ResponseEntity<Brand> addBrand(@RequestBody BrandDto brand) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brand));
     }
 
     @PostMapping("/cartItem")
-    public ResponseEntity<CartItem> addCartItem(@RequestBody CartItem cartItem) {
+    public ResponseEntity<CartItem> addCartItem(@RequestBody CartItemDto cartItem) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartItemService.save(cartItem));
     }
 
     @PostMapping("/cart")
-    public ResponseEntity<Cart> addCart(@RequestBody Cart cart) {
+    public ResponseEntity<Cart> addCart(@RequestBody CartDto cart) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
     }
 
     @PostMapping("/orderItem")
-    public ResponseEntity<OrderItem> addOrderItem(@RequestBody OrderItem orderItem) {
+    public ResponseEntity<OrderItem> addOrderItem(@RequestBody OrderItemDto orderItem) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderItemService.save(orderItem));
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<Orders> addOrders(@RequestBody Orders orders) {
+    public ResponseEntity<Orders> addOrders(@RequestBody OrdersDto orders) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ordersService.save(orders));
     }
 
     @PostMapping("/product")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> addProduct(@RequestBody ProductDto product) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Users> addUsers(@RequestBody Users users) {
+    public ResponseEntity<Users> addUsers(@RequestBody UsersDto users) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usersService.save(users));
     }
 }

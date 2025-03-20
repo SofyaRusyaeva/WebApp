@@ -1,5 +1,7 @@
 package com.example.WebApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -23,8 +25,15 @@ public class Users {
     String phone;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Orders> orders;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     Cart cart;
+
+    @JsonProperty("cartId")
+    public Long getCartId() {
+        return cart.getCartId();
+    }
 }
