@@ -8,6 +8,7 @@ import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +21,13 @@ public class UsersService {
     UsersRepository usersRepository;
     CartRepository cartRepository;
     Mapper mapper;
+    PasswordEncoder passwordEncoder;
 
     public List<Users> findAll() { return usersRepository.findAll(); }
 
     public Users save(UsersDto userDto) {
         Users user = mapper.toUsers(userDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return usersRepository.save(user);
     }
 }
