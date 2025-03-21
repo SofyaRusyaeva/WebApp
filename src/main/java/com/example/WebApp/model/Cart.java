@@ -3,6 +3,7 @@ package com.example.WebApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +19,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long cartId;
 
+    @NotNull(message = "Total price can't be null")
     Long totalPrice;
 
     @OneToOne

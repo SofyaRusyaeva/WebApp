@@ -3,11 +3,13 @@ package com.example.WebApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -20,7 +22,11 @@ public class Orders {
     Long orderId;
 
     Long totalPrice;
-    Date date;
+
+    @NotNull(message = "Date can't be null")
+    LocalDate date;
+
+    @NotBlank(message = "Status can't blank")
     String status;
 
     @ManyToOne

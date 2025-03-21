@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -19,9 +21,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long productId;
 
+    @NotBlank(message = "Name can't be blank")
     String name;
+
     String description;
+
     String category;
+
+    @NotNull(message = "Price can't be null")
     Long price;
 
     @ManyToOne

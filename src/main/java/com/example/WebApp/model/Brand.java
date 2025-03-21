@@ -3,6 +3,7 @@ package com.example.WebApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -18,7 +19,10 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long brandId;
 
+    @NotBlank(message = "Name cant be null")
+    @Column(unique = true)
     String name;
+
     String country;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
