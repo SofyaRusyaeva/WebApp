@@ -4,6 +4,7 @@ package com.example.WebApp.controller;
 import com.example.WebApp.dto.CartDto;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.service.CartService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +23,7 @@ public class CartController {
     CartService cartService;
 
     @PostMapping()
-    public ResponseEntity<Cart> addCart(@RequestBody CartDto cart) {
+    public ResponseEntity<Cart> addCart(@Valid @RequestBody CartDto cart) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
     }
 

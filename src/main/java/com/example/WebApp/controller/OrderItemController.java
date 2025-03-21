@@ -4,6 +4,7 @@ package com.example.WebApp.controller;
 import com.example.WebApp.dto.OrderItemDto;
 import com.example.WebApp.model.OrderItem;
 import com.example.WebApp.service.OrderItemService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +28,7 @@ public class OrderItemController {
     }
 
     @PostMapping()
-    public ResponseEntity<OrderItem> addOrderItem(@RequestBody OrderItemDto orderItem) {
+    public ResponseEntity<OrderItem> addOrderItem(@Valid @RequestBody OrderItemDto orderItem) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderItemService.save(orderItem));
     }
 

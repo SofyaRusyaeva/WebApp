@@ -3,6 +3,7 @@ package com.example.WebApp.controller;
 import com.example.WebApp.dto.OrdersDto;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.service.OrdersService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class OrdersController {
     }
 
     @PostMapping()
-    public ResponseEntity<Orders> addOrders(@RequestBody OrdersDto orders) {
+    public ResponseEntity<Orders> addOrders(@Valid @RequestBody OrdersDto orders) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ordersService.save(orders));
     }
 

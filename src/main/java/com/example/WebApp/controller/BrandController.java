@@ -3,6 +3,7 @@ package com.example.WebApp.controller;
 import com.example.WebApp.dto.BrandDto;
 import com.example.WebApp.model.Brand;
 import com.example.WebApp.service.BrandService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class BrandController {
     }
 
     @PostMapping()
-    public ResponseEntity<Brand> addBrand(@RequestBody BrandDto brand) {
+    public ResponseEntity<Brand> addBrand(@Valid @RequestBody BrandDto brand) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brand));
     }
 

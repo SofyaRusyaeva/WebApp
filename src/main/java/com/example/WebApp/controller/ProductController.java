@@ -1,9 +1,9 @@
 package com.example.WebApp.controller;
 
 import com.example.WebApp.dto.ProductDto;
-import com.example.WebApp.model.Brand;
 import com.example.WebApp.model.Product;
 import com.example.WebApp.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @PostMapping()
-    public ResponseEntity<Product> addProduct(@RequestBody ProductDto product) {
+    public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductDto product) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
     }
 
