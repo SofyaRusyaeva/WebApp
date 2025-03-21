@@ -21,8 +21,13 @@ public class BrandService {
     Mapper mapper;
 
     public List<Brand> findAll() { return brandRepository.findAll(); }
+
     public Brand save(BrandDto brandDto) {
         Brand brand = mapper.toBrand(brandDto);
         return brandRepository.save(brand);
+    }
+
+    public void delete(Long brandId) {
+        brandRepository.deleteById(brandId);
     }
 }

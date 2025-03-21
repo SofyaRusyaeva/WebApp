@@ -30,4 +30,8 @@ public class CartService {
         Cart cart = mapper.toCart(cartDto, user);
         return cartRepository.save(cart);
     }
+
+    public void delete(Long cartId) {
+        usersRepository.deleteById(cartId);
+    }
 }

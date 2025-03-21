@@ -30,4 +30,8 @@ public class UsersService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return usersRepository.save(user);
     }
+
+    public void delete(Long userId) {
+        usersRepository.deleteById(userId);
+    }
 }

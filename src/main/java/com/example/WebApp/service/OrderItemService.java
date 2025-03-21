@@ -36,4 +36,8 @@ public class OrderItemService {
         OrderItem orderItem = mapper.toOrderItem(orderItemDto, order, product);
         return orderItemRepository.save(orderItem);
     }
+
+    public void delete(Long orderItemId) {
+        orderItemRepository.deleteById(orderItemId);
+    }
 }

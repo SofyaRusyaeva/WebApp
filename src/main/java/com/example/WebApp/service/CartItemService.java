@@ -26,6 +26,7 @@ public class CartItemService {
     Mapper mapper;
 
     public List<CartItem> findAll() { return cartItemRepository.findAll(); }
+
     public CartItem save(CartItemDto cartItemDto) {
         Cart cart = cartRepository.findById(cartItemDto.getCartId())
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
@@ -34,5 +35,9 @@ public class CartItemService {
 
         CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
         return cartItemRepository.save(cartItem);
+    }
+
+    public void delete(Long cartItemId) {
+        cartItemRepository.deleteById(cartItemId);
     }
 }

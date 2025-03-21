@@ -31,4 +31,8 @@ public class OrdersService {
         Orders order = mapper.toOrders(orderDto, user);
         return ordersRepository.save(order);
     }
+
+    public void delete(Long ordersId) {
+        ordersRepository.deleteById(ordersId);
+    }
 }
