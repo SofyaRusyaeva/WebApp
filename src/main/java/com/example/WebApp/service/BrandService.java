@@ -7,7 +7,6 @@ import com.example.WebApp.repository.BrandRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +24,16 @@ public class BrandService {
     public Brand save(BrandDto brandDto) {
         Brand brand = mapper.toBrand(brandDto);
         return brandRepository.save(brand);
+    }
+
+    public Brand update(BrandDto newBrand, Long id) {
+        Brand oldBrand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Brand not found with id: " + id));
+
+        oldBrand.setName(newBrand.getName());
+        oldBrand.setCountry(newBrand.getCountry());
+
+        return brandRepository.save(oldBrand);
     }
 
     public void delete(Long brandId) {

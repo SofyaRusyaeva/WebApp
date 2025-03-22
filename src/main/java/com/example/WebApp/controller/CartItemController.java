@@ -32,6 +32,11 @@ public class CartItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartItemService.save(cartItem));
     }
 
+    @PutMapping("/{cartItemId}")
+    public ResponseEntity<CartItem> updateCartItem(@Valid @RequestBody CartItemDto cartItem, @PathVariable Long cartItemId) {
+        return ResponseEntity.ok(cartItemService.update(cartItem, cartItemId));
+    }
+
     @DeleteMapping("/{cartItemId}")
     public ResponseEntity<?> deleteCartItem (@PathVariable Long cartItemId) {
         cartItemService.delete(cartItemId);

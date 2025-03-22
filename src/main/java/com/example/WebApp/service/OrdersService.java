@@ -9,7 +9,6 @@ import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +29,21 @@ public class OrdersService {
 
         Orders order = mapper.toOrders(orderDto, user);
         return ordersRepository.save(order);
+    }
+
+    public Orders update(OrdersDto newOrder, Long id) {
+        Orders oldOrder = ordersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+
+        Users user = usersRepository.findById(newOrder.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + newOrder.getUserId()));
+
+        oldOrder.setUser(user);
+        oldOrder.setTotalPrice(newOrder.getTotalPrice());
+        oldOrder.setDate(newOrder.getDate());
+        oldOrder.setStatus(newOrder.getStatus());
+
+        return ordersRepository.save(oldOrder);
     }
 
     public void delete(Long ordersId) {

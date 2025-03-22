@@ -31,6 +31,11 @@ public class UsersController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usersService.save(users));
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<Users> updateUsers(@Valid @RequestBody UsersDto users, @PathVariable Long userId) {
+        return ResponseEntity.ok(usersService.update(users, userId));
+    }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUsers (@PathVariable Long userId) {
         usersService.delete(userId);

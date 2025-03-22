@@ -34,4 +34,16 @@ public class UsersService {
     public void delete(Long userId) {
         usersRepository.deleteById(userId);
     }
+
+    public Users update(UsersDto newUser, Long id) {
+        Users oldUser = usersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        oldUser.setUserName(newUser.getUserName());
+        oldUser.setEmail(newUser.getEmail());
+        oldUser.setPassword(newUser.getPassword()); //passwordEncoder.encode(
+        oldUser.setPhone(newUser.getPhone());
+
+        return usersRepository.save(oldUser);
+    }
 }

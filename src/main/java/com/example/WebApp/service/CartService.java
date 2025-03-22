@@ -9,7 +9,6 @@ import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +28,19 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = mapper.toCart(cartDto, user);
         return cartRepository.save(cart);
+    }
+
+    public Cart update(CartDto newCart, Long id) {
+        Cart oldCart = cartRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cart not found with id: " + id));
+
+        Users user = usersRepository.findById(newCart.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + newCart.getUserId()));
+
+//        oldCart.setUser(user);
+        oldCart.setTotalPrice(newCart.getTotalPrice());
+
+        return cartRepository.save(oldCart);
     }
 
     public void delete(Long cartId) {

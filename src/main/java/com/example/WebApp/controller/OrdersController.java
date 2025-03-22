@@ -31,9 +31,14 @@ public class OrdersController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ordersService.save(orders));
     }
 
+    @PutMapping("/{ordersId}")
+    public ResponseEntity<Orders> updateOrder(@Valid @RequestBody OrdersDto order, @PathVariable Long ordersId) {
+        return ResponseEntity.ok(ordersService.update(order, ordersId));
+    }
+
     @DeleteMapping("/{ordersId}")
     public ResponseEntity<?> deleteOrders(@PathVariable Long ordersId) {
         ordersService.delete(ordersId);
-        return ResponseEntity.ok(String.format("UOrderser %s deleted", ordersId));
+        return ResponseEntity.ok(String.format("Order %s deleted", ordersId));
     }
 }

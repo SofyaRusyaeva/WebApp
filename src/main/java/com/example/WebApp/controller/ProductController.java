@@ -22,24 +22,10 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getProducts() {
-        return ResponseEntity.ok(productService.findAll());
-    }
-
-    @GetMapping("/sortByName")
-    public ResponseEntity<List<Product>> getProductsSortedByName(@RequestParam(defaultValue = "asc") String order) {
-        if ("desc".equalsIgnoreCase(order)) {
-            return ResponseEntity.ok(productService.getProductsSortedByNameDesc());
-        }
-        return ResponseEntity.ok(productService.getProductsSortedByNameAsc());
-    }
-
-    @GetMapping("/sortByPrice")
-    public ResponseEntity<List<Product>> getProductsSortedByPrice(@RequestParam(defaultValue = "asc") String order) {
-        if ("desc".equalsIgnoreCase(order)) {
-            return ResponseEntity.ok(productService.getProductsSortedByPriceDesc());
-        }
-        return ResponseEntity.ok(productService.getProductsSortedByPriceAsc());
+    public ResponseEntity<List<Product>> getProductsSortedByName(
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        return ResponseEntity.ok(productService.findAllSorted(sortBy, sortDirection));
     }
 
     @PostMapping()
@@ -47,9 +33,14 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
     }
 
+    @PutMapping("/{productId}")
+    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductDto product, @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.update(product, productId));
+    }
+
     @DeleteMapping("/{productId}")
     public ResponseEntity<?> deleteProduct (@PathVariable Long productId) {
         productService.delete(productId);
-        return ResponseEntity.ok(String.format("Product %s deleted", productId));
+        return ResponseEntity.noContent().build();
     }
 }

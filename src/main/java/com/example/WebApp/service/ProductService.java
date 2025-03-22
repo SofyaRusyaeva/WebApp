@@ -38,19 +38,35 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public List<Product> getProductsSortedByNameAsc() {
-        return productRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    public Product update(ProductDto newProduct, Long id) {
+        Product oldProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        Brand brand = brandRepository.findById(newProduct.getBrandId())
+                .orElseThrow(() -> new RuntimeException("Brand not found with id: " + newProduct.getBrandId()));
+
+        oldProduct.setName(newProduct.getName());
+        oldProduct.setPrice(newProduct.getPrice());
+        oldProduct.setBrand(brand);
+        oldProduct.setDescription(newProduct.getDescription());
+        oldProduct.setCategory(newProduct.getCategory());
+
+        return productRepository.save(oldProduct);
     }
 
-    public List<Product> getProductsSortedByNameDesc() {
-        return productRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
-    }
-
-    public List<Product> getProductsSortedByPriceAsc() {
-        return productRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
-    }
-
-    public List<Product> getProductsSortedByPriceDesc() {
-        return productRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
+    public List<Product> findAllSorted(String sortBy, String sortDirection) {
+        if ("desc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
+            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
+        }
+        if ("asc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
+            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        }
+        if ("desc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
+            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
+        }
+        if ("asc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
+            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
+        }
+        return productRepository.findAll();
     }
 }

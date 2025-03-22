@@ -31,6 +31,11 @@ public class BrandController {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brand));
     }
 
+    @PutMapping("/{brandId}")
+    public ResponseEntity<Brand> updateBrand(@Valid @RequestBody BrandDto brand, @PathVariable Long brandId) {
+        return ResponseEntity.ok(brandService.update(brand, brandId));
+    }
+
     @DeleteMapping("/{brandId}")
     public ResponseEntity<?> deleteBrand (@PathVariable Long brandId) {
         brandService.delete(brandId);
