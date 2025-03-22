@@ -21,9 +21,14 @@ public class UsersController {
 
     UsersService usersService;
 
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<List<Users>> getUsers() {
         return ResponseEntity.ok(usersService.findAll());
+    }
+
+    @GetMapping("/{userId}")
+    public  ResponseEntity<Users> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(usersService.findById(userId));
     }
 
     @PostMapping()
@@ -39,6 +44,6 @@ public class UsersController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUsers (@PathVariable Long userId) {
         usersService.delete(userId);
-        return ResponseEntity.ok(String.format("User %s deleted", userId));
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.WebApp.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -15,6 +16,10 @@ public class OrdersDto {
     Long userId;
 
     Long totalPrice;
+
+    @NotNull(message = "Date can't be null")
     LocalDate date;
+
+    @NotBlank(message = "Status can't blank")
     String status;
 }

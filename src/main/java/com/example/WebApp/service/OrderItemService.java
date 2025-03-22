@@ -1,6 +1,7 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.OrderItemDto;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.OrderItem;
 import com.example.WebApp.model.Orders;
@@ -34,7 +35,11 @@ public class OrderItemService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         OrderItem orderItem = mapper.toOrderItem(orderItemDto, order, product);
-        return orderItemRepository.save(orderItem);
+        try {
+            return orderItemRepository.save(orderItem);
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving brand");
+        }
     }
 
     public OrderItem update(OrderItemDto newOrderItem, Long id) {

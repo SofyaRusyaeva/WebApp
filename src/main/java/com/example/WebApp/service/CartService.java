@@ -1,6 +1,7 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.CartDto;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.Users;
@@ -27,7 +28,11 @@ public class CartService {
         Users user = usersRepository.findById(cartDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = mapper.toCart(cartDto, user);
-        return cartRepository.save(cart);
+        try {
+            return cartRepository.save(cart);
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving brand");
+        }
     }
 
     public Cart update(CartDto newCart, Long id) {
@@ -37,7 +42,7 @@ public class CartService {
         Users user = usersRepository.findById(newCart.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + newCart.getUserId()));
 
-//        oldCart.setUser(user);
+        oldCart.setUser(user);
         oldCart.setTotalPrice(newCart.getTotalPrice());
 
         return cartRepository.save(oldCart);

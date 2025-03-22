@@ -40,6 +40,6 @@ public class OrderItemController {
     @DeleteMapping("/{orderItemId}")
     public ResponseEntity<?> deleteOrderItem (@PathVariable Long orderItemId) {
         orderItemService.delete(orderItemId);
-        return ResponseEntity.ok(String.format("Order item %s deleted", orderItemId));
+        return ResponseEntity.noContent().build();
     }
 }

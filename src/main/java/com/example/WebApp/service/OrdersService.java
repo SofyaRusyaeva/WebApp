@@ -1,6 +1,8 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.OrdersDto;
+import com.example.WebApp.exeption.ObjectNotFoundException;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.model.Users;
@@ -21,22 +23,33 @@ public class OrdersService {
     UsersRepository usersRepository;
     Mapper mapper;
 
-    public List<Orders> findAll() { return ordersRepository.findAll(); }
+    public List<Orders> findAll() {
+        return ordersRepository.findAll();
+    }
+
+    public Orders findByOrderId(Long orderId) {
+        return ordersRepository.findById(orderId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Order %s not found", orderId)));
+    }
 
     public Orders save(OrdersDto orderDto) {
         Users user = usersRepository.findById(orderDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Orders order = mapper.toOrders(orderDto, user);
-        return ordersRepository.save(order);
+        try {
+            return ordersRepository.save(order);
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving order");
+        }
     }
 
     public Orders update(OrdersDto newOrder, Long id) {
         Orders oldOrder = ordersRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Order %s not found", id)));
 
         Users user = usersRepository.findById(newOrder.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + newOrder.getUserId()));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("User %s not found", newOrder.getUserId())));
 
         oldOrder.setUser(user);
         oldOrder.setTotalPrice(newOrder.getTotalPrice());

@@ -1,6 +1,8 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.ProductDto;
+import com.example.WebApp.exeption.ObjectNotFoundException;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Brand;
 import com.example.WebApp.model.Product;
@@ -23,15 +25,24 @@ public class ProductService {
     BrandRepository brandRepository;
     Mapper mapper;
 
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
 
-    public List<Product> findAll() { return productRepository.findAll(); }
+    public Product findById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productId)));
+    }
 
     public Product save(ProductDto productDto) {
         Brand brand = brandRepository.findById(productDto.getBrandId())
-                .orElseThrow(() -> new RuntimeException("Brand not found with id: " + productDto.getBrandId()));
-
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productDto.getBrandId())));
         Product product = mapper.toProduct(productDto, brand);
-        return productRepository.save(product);
+        try {
+            return productRepository.save(product);
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving brand");
+        }
     }
 
     public void delete(Long productId) {
@@ -40,7 +51,7 @@ public class ProductService {
 
     public Product update(ProductDto newProduct, Long id) {
         Product oldProduct = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", id)));
 
         Brand brand = brandRepository.findById(newProduct.getBrandId())
                 .orElseThrow(() -> new RuntimeException("Brand not found with id: " + newProduct.getBrandId()));

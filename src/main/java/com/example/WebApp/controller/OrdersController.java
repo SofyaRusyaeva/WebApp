@@ -26,6 +26,11 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.findAll());
     }
 
+    @GetMapping("/{ordersId}")
+    public ResponseEntity<Orders> getOrderById(@PathVariable Long ordersId) {
+        return ResponseEntity.ok(ordersService.findByOrderId(ordersId));
+    }
+
     @PostMapping()
     public ResponseEntity<Orders> addOrders(@Valid @RequestBody OrdersDto orders) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ordersService.save(orders));
@@ -39,6 +44,6 @@ public class OrdersController {
     @DeleteMapping("/{ordersId}")
     public ResponseEntity<?> deleteOrders(@PathVariable Long ordersId) {
         ordersService.delete(ordersId);
-        return ResponseEntity.ok(String.format("Order %s deleted", ordersId));
+        return ResponseEntity.noContent().build();
     }
 }

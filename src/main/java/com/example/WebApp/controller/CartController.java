@@ -40,6 +40,6 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public ResponseEntity<?> deleteCart (@PathVariable Long cartId) {
         cartService.delete(cartId);
-        return ResponseEntity.ok(String.format("Cart %s deleted", cartId));
+        return ResponseEntity.noContent().build();
     }
 }

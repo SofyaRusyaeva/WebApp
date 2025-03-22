@@ -28,6 +28,12 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAllSorted(sortBy, sortDirection));
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.findById(productId));
+    }
+
+
     @PostMapping()
     public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductDto product) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));

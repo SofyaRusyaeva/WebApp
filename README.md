@@ -57,10 +57,10 @@
 # Структура API
 ## Пользователи
 
-### Информация о текущем пользователе
+### !Информация о текущем пользователе
 **Метод**: `GET`
 
-**URL**: `/api/users/me`
+**URL**: `/api/shop/user//{userId}`
 
 #### Успешный ответ
 
@@ -84,7 +84,7 @@
 ### Информация о конкретном пользователе
 **Метод**: `GET`
 
-**URL**: `/api/users/{id}`
+**URL**: `/api/shop/users/{id}`
 
 #### Успешный ответ
 
@@ -92,10 +92,11 @@
 
 ```json
 {
-  "id": 1,
-  "username": "user",
-  "email": "user@example.com",
-  "phone": 123456789
+  "userId": 1,
+  "userName": "Ann",
+  "email": "ann@gmail.com",
+  "password": "$2a$10$uRCsPwku1eHlVwsbOtMkuOnjj2UlprtbX85/5uPZwx3n2JA.irjki",
+  "phone": "1234567890"
 }
 ```
 #### Ошибка
@@ -107,15 +108,15 @@
 ### Создание нового пользователя 
 **Метод**: `POST`
 
-**URL**: `/api/users`
+**URL**: `/api/shop/users`
 
 **Тело запроса**
 ```json
 {
-  "username": "user",
-  "email": "user@example.com",
-  "password": "123",
-  "phone": 123456789
+  "userName": "Kate",
+  "email": "kate@gmail.com",
+  "password": "qwerty",
+  "phone": "+79272053156"
 }
 ```
 
@@ -125,10 +126,11 @@
 
 ```json
 {
-  "id": 1,
-  "username": "user",
-  "email": "user@example.com",
-  "phone": 123456789
+  "userId": 3,
+  "userName": "Kate",
+  "email": "kate@gmail.com",
+  "password": "$2a$10$bZqaMDoPcYqo90sFJULIDOKZJ01h5/JUVMD7sYC40T9Ru/IyJ23/y",
+  "phone": "+79272053156"
 }
 ```
 #### Ошибка
@@ -136,7 +138,7 @@
 
 **Code**: `400 Bad Request`
 
-### Обновление информации о текущем пользователе
+### !Обновление информации о текущем пользователе
 **Метод**: `PUT`
 
 **URL**: `/api/users/me`
@@ -175,7 +177,7 @@
 **Code**: `409 Conflict`
 
 
-### Удаление текущего пользователя
+### !Удаление текущего пользователя
 **Метод**: `DELETE`
 
 **URL**: `/api/users/me`
@@ -190,7 +192,7 @@
 **Code**: `401 Unauthorized`
 
 
-### Регистрация пользователя
+### !Регистрация пользователя
 **Method**: `POST`
 
 **URL**: `/api/auth/register`
@@ -223,7 +225,7 @@
 **Code**: `400 Bad Request`
 
 
-### Авторизация пользователя
+### !Авторизация пользователя
 **Method**: `POST`
 
 **URL**: `/api/auth/login`
@@ -250,7 +252,7 @@
 ### Список товаров
 **Method**: `GET`
 
-**URL**: `/api/products`
+**URL**: `/api/shop/products`
 
 #### Успешный ответ
 
@@ -276,7 +278,7 @@
 ### Информация о товаре
 **Method**: `GET`
 
-**URL**: `/api/products/{id}`
+**URL**: `/api/shop/products/{id}`
 
 #### Успешный ответ
 
@@ -303,7 +305,7 @@
 ### Добавление нового товара
 **Method**: `POST` 
 
-**URL**: `/api/products`
+**URL**: `/api/shop/products`
 
 ```json
 {
@@ -379,7 +381,7 @@
 ### Удаление товара
 **Method**: `DELETE` 
 
-**URL**: `/api/products/{id}`
+**URL**: `/api/shop/products/{id}`
 
 #### Успешный ответ
 
@@ -394,10 +396,10 @@
 
 
 ## Заказы
-### Список заказов текущего пользователя
+### !Список заказов текущего пользователя
 **Method**: `GET`
 
-**URL**: `/api/orders`
+**URL**: `/api/shop/orders`
 
 #### Успешный ответ
 
@@ -421,7 +423,7 @@
 ### Информация о заказе
 **Method**: `GET`
 
-**URL**: `/api/orders/{id}`
+**URL**: `/api/shop/orders/{id}`
 
 #### Успешный ответ
 
@@ -440,10 +442,10 @@
 **Code**: `404 Not Found`
 
 
-### Создание заказа
+### ?Создание заказа
 **Method**: `POST`
 
-**URL**: `/api/orders`
+**URL**: `/api/shop/orders`
 ```json
 {
     "cart_id": 1

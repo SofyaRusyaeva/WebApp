@@ -1,6 +1,9 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.UsersDto;
+import com.example.WebApp.exeption.DuplicateException;
+import com.example.WebApp.exeption.ObjectNotFoundException;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Users;
 import com.example.WebApp.repository.CartRepository;
@@ -8,6 +11,7 @@ import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +32,13 @@ public class UsersService {
     public Users save(UsersDto userDto) {
         Users user = mapper.toUsers(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return usersRepository.save(user);
+        try {
+            return usersRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving user");
+        }
     }
 
     public void delete(Long userId) {
@@ -41,9 +51,14 @@ public class UsersService {
 
         oldUser.setUserName(newUser.getUserName());
         oldUser.setEmail(newUser.getEmail());
-        oldUser.setPassword(newUser.getPassword()); //passwordEncoder.encode(
+        oldUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //passwordEncoder.encode(
         oldUser.setPhone(newUser.getPhone());
 
         return usersRepository.save(oldUser);
+    }
+
+    public Users findById(Long userId) {
+        return usersRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("User %s not found", userId)));
     }
 }

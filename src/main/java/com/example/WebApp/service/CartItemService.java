@@ -1,6 +1,7 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.CartItemDto;
+import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.CartItem;
@@ -33,7 +34,11 @@ public class CartItemService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
-        return cartItemRepository.save(cartItem);
+        try {
+            return cartItemRepository.save(cartItem);
+        } catch (Exception e) {
+            throw new ObjectSaveException("Error saving brand");
+        }
     }
 
     public CartItem update(CartItemDto newCartItem, Long id) {
