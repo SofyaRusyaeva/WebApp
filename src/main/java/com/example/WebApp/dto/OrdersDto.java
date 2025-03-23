@@ -1,6 +1,8 @@
 package com.example.WebApp.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.example.WebApp.model.OrderStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class OrdersDto {
     @NotNull(message = "Date can't be null")
     LocalDate date;
 
-    @NotBlank(message = "Status can't blank")
-    String status;
+    //@NotBlank(message = "Status can't blank")
+    @Enumerated(EnumType.STRING)
+    OrderStatus status;
 }

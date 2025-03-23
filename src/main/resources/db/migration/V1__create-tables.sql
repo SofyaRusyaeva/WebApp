@@ -10,14 +10,16 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS brand (
     brand_id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
-    country VARCHAR(50)
+    country VARCHAR(255) CHECK (country IN ('Russia', 'Belarus',
+    'USA', 'China', 'France', 'Italy', 'Korea'))
 );
 
   CREATE TABLE IF NOT EXISTS product (
       product_id SERIAL PRIMARY KEY,
       name VARCHAR(50) NOT NULL,
       description TEXT,
-      category VARCHAR(50),
+      category VARCHAR(255) CHECK (category IN ('skincare', 'makeup', 'haircare', 'parfume',
+      'nail_care', 'sun_care', 'men_cosmetics', 'organic', 'other')),
       brand_id INT NOT NULL,
       price NUMERIC(10,2) NOT NULL,
       CONSTRAINT fk_brand_product FOREIGN KEY (brand_id) REFERENCES brand(brand_id)
@@ -35,7 +37,8 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id INT NOT NULL,
     total_price NUMERIC(10,2) NOT NULL,
     date DATE NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    status VARCHAR(255) NOT NULL CHECK (status IN ('completed',
+    'canceled', 'being_assembled', 'in_transit', 'delivered', 'failed')),
     CONSTRAINT fk_user_order FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 

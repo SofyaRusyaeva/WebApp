@@ -26,7 +26,8 @@ public class Product {
 
     String description;
 
-    String category;
+    @Enumerated(EnumType.STRING)
+    ProductCategory category;
 
     @NotNull(message = "Price can't be null")
     Long price;

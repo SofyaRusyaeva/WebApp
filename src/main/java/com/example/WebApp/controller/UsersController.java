@@ -21,8 +21,8 @@ public class UsersController {
 
     UsersService usersService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Users>> getUsers() {
+    @GetMapping()
+    public ResponseEntity<List<Users>> getUser() {
         return ResponseEntity.ok(usersService.findAll());
     }
 

@@ -1,5 +1,8 @@
 package com.example.WebApp.dto;
 
+import com.example.WebApp.model.ProductCategory;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -14,7 +17,9 @@ public class ProductDto {
     String name;
 
     String description;
-    String category;
+
+    @Enumerated(EnumType.STRING)
+    ProductCategory category;
 
     @NotNull(message = "Price can't be null")
     Long price;

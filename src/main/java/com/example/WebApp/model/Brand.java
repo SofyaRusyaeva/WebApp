@@ -23,7 +23,8 @@ public class Brand {
     @Column(unique = true)
     String name;
 
-    String country;
+    @Enumerated(EnumType.STRING)
+    Country country;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     @JsonManagedReference

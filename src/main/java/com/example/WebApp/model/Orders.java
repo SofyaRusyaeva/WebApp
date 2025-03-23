@@ -3,7 +3,6 @@ package com.example.WebApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -26,8 +25,9 @@ public class Orders {
     @NotNull(message = "Date can't be null")
     LocalDate date;
 
-    @NotBlank(message = "Status can't blank")
-    String status;
+    //@NotBlank(message = "Status can't blank")
+    @Enumerated(EnumType.STRING)
+    OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
