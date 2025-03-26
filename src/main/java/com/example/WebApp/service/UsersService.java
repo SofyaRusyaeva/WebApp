@@ -1,5 +1,6 @@
 package com.example.WebApp.service;
 
+import com.example.WebApp.dto.CartDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.exeption.DuplicateException;
 import com.example.WebApp.exeption.ObjectNotFoundException;
@@ -22,6 +23,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UsersService {
 
+    CartService cartService;
     UsersRepository usersRepository;
     CartRepository cartRepository;
     Mapper mapper;
@@ -33,12 +35,14 @@ public class UsersService {
         Users user = mapper.toUsers(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
-            return usersRepository.save(user);
+            usersRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
         } catch (Exception e) {
             throw new ObjectSaveException("Error saving user");
         }
+        cartService.save(new CartDto(0L, user.getUserId()));
+        return user;
     }
 
     public void delete(Long userId) {

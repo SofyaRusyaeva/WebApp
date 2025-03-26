@@ -6,6 +6,7 @@ import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.model.Users;
+import com.example.WebApp.repository.OrderItemRepository;
 import com.example.WebApp.repository.OrdersRepository;
 import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
@@ -21,6 +22,7 @@ import java.util.List;
 public class OrdersService {
     OrdersRepository ordersRepository;
     UsersRepository usersRepository;
+    OrderItemRepository orderItemRepository;
     Mapper mapper;
 
     public List<Orders> findAll() {
@@ -37,6 +39,8 @@ public class OrdersService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Orders order = mapper.toOrders(orderDto, user);
+//        Long totalPrice = orderItemRepository.calculateTotalPriceByOrderId(order.getOrderId());
+//        order.setTotalPrice(totalPrice);
         try {
             return ordersRepository.save(order);
         } catch (Exception e) {

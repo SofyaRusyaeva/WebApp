@@ -33,6 +33,7 @@ public class CartItemService {
         Product product = productRepository.findById(cartItemDto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        cart.setTotalPrice(cart.getTotalPrice() + product.getPrice() * cartItemDto.getQuantity());
         CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
         try {
             return cartItemRepository.save(cartItem);

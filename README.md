@@ -60,7 +60,7 @@
 ### !Информация о текущем пользователе
 **Метод**: `GET`
 
-**URL**: `/api/shop/user//{userId}`
+**URL**: `/api/shop/user/{userId}`
 
 #### Успешный ответ
 
@@ -305,7 +305,7 @@
 ### Добавление нового товара
 **Method**: `POST` 
 
-**URL**: `/api/shop/products`
+**URL**: `/api/shop/product`
 
 ```json
 {
@@ -341,7 +341,7 @@
 ### Изменения товара
 **Method**: `PUT` 
 
-**URL**: `/api/products/{id}`
+**URL**: `/api/product/{id}`
 
 ```json
 {
@@ -381,7 +381,7 @@
 ### Удаление товара
 **Method**: `DELETE` 
 
-**URL**: `/api/shop/products/{id}`
+**URL**: `/api/shop/product/{id}`
 
 #### Успешный ответ
 
@@ -458,7 +458,7 @@
 ```json
 {
   "id": 1,
-  "status": "in progress",
+  "status": "in_progress",
   "products": [
     {
       "product_id": 1,

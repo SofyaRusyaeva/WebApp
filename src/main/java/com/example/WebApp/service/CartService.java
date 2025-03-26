@@ -28,6 +28,7 @@ public class CartService {
         Users user = usersRepository.findById(cartDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = mapper.toCart(cartDto, user);
+        cart.setTotalPrice(0L);
         try {
             return cartRepository.save(cart);
         } catch (Exception e) {

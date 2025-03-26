@@ -4,7 +4,7 @@ public enum ProductCategory {
     skincare,
     makeup,
     haircare,
-    parfume,
+    perfume,
     nail_care,
     sun_care,
     men_cosmetics,

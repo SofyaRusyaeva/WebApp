@@ -42,24 +42,24 @@ public class OrderItemService {
         }
     }
 
-    public OrderItem update(OrderItemDto newOrderItem, Long id) {
-        OrderItem oldOrderItem = orderItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem not found with id: " + id));
+//    public OrderItem update(OrderItemDto newOrderItem, Long id) {
+//        OrderItem oldOrderItem = orderItemRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("OrderItem not found with id: " + id));
+//
+//        Product product = productRepository.findById(newOrderItem.getProductId())
+//                .orElseThrow(() -> new RuntimeException("Product not found with id: " + newOrderItem.getProductId()));
+//
+//        Orders order = ordersRepository.findById(newOrderItem.getProductId())
+//                .orElseThrow(() -> new RuntimeException("Order not found with id: " + newOrderItem.getOrderId()));
+//
+//        oldOrderItem.setOrder(order);
+//        oldOrderItem.setProduct(product);
+//        oldOrderItem.setQuantity(newOrderItem.getQuantity());
+//
+//        return orderItemRepository.save(oldOrderItem);
+//    }
 
-        Product product = productRepository.findById(newOrderItem.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + newOrderItem.getProductId()));
-
-        Orders order = ordersRepository.findById(newOrderItem.getProductId())
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + newOrderItem.getOrderId()));
-
-        oldOrderItem.setOrder(order);
-        oldOrderItem.setProduct(product);
-        oldOrderItem.setQuantity(newOrderItem.getQuantity());
-
-        return orderItemRepository.save(oldOrderItem);
-    }
-
-    public void delete(Long orderItemId) {
-        orderItemRepository.deleteById(orderItemId);
-    }
+//    public void delete(Long orderItemId) {
+//        orderItemRepository.deleteById(orderItemId);
+//    }
 }

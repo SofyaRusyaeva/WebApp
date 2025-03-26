@@ -32,14 +32,14 @@ public class OrderItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderItemService.save(orderItem));
     }
 
-    @PutMapping("/{orderItemId}")
-    public ResponseEntity<OrderItem> updateOrderItem(@Valid @RequestBody OrderItemDto orderItem, @PathVariable Long orderItemId) {
-        return ResponseEntity.ok(orderItemService.update(orderItem, orderItemId));
-    }
+//    @PutMapping("/{orderItemId}")
+//    public ResponseEntity<OrderItem> updateOrderItem(@Valid @RequestBody OrderItemDto orderItem, @PathVariable Long orderItemId) {
+//        return ResponseEntity.ok(orderItemService.update(orderItem, orderItemId));
+//    }
 
-    @DeleteMapping("/{orderItemId}")
-    public ResponseEntity<?> deleteOrderItem (@PathVariable Long orderItemId) {
-        orderItemService.delete(orderItemId);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{orderItemId}")
+//    public ResponseEntity<?> deleteOrderItem (@PathVariable Long orderItemId) {
+//        orderItemService.delete(orderItemId);
+//        return ResponseEntity.noContent().build();
+//    }
 }

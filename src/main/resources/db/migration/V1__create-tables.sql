@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS brand (
       product_id SERIAL PRIMARY KEY,
       name VARCHAR(50) NOT NULL,
       description TEXT,
-      category VARCHAR(255) CHECK (category IN ('skincare', 'makeup', 'haircare', 'parfume',
+      category VARCHAR(255) CHECK (category IN ('skincare', 'makeup', 'haircare', 'perfume',
       'nail_care', 'sun_care', 'men_cosmetics', 'organic', 'other')),
       brand_id INT NOT NULL,
       price NUMERIC(10,2) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS orders (
     total_price NUMERIC(10,2) NOT NULL,
     date DATE NOT NULL,
     status VARCHAR(255) NOT NULL CHECK (status IN ('completed',
-    'canceled', 'being_assembled', 'in_transit', 'delivered', 'failed')),
+    'canceled', 'in_progress', 'in_transit', 'delivered', 'failed')),
     CONSTRAINT fk_user_order FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
