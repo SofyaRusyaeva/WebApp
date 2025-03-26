@@ -26,7 +26,7 @@ public class Orders {
     @NotNull(message = "Date can't be null")
     LocalDate date;
 
-    @NotBlank(message = "Status can't blank")
+//    @NotBlank(message = "Status can't blank")
     @Enumerated(EnumType.STRING)
     OrderStatus status;
 
