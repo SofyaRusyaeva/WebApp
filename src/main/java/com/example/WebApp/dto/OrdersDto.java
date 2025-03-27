@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -18,7 +19,7 @@ public class OrdersDto {
     @NotNull(message = "User id can't be null")
     Long userId;
 
-    Long totalPrice;
+    BigDecimal totalPrice;
 
     @NotNull(message = "Date can't be null")
     LocalDate date;

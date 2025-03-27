@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
@@ -22,7 +24,7 @@ public class ProductDto {
     ProductCategory category;
 
     @NotNull(message = "Price can't be null")
-    Long price;
+    BigDecimal price;
 
     @NotNull(message = "Brand id can't be null")
     Long brandId;

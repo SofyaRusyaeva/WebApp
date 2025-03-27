@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long orderId;
 
-    Long totalPrice;
+    BigDecimal totalPrice;
 
     @NotNull(message = "Date can't be null")
     LocalDate date;

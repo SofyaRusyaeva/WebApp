@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -30,7 +31,7 @@ public class Product {
     ProductCategory category;
 
     @NotNull(message = "Price can't be null")
-    Long price;
+    BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -33,7 +34,10 @@ public class CartItemService {
         Product product = productRepository.findById(cartItemDto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        cart.setTotalPrice(cart.getTotalPrice() + product.getPrice() * cartItemDto.getQuantity());
+
+        BigDecimal quantity = BigDecimal.valueOf(cartItemDto.getQuantity());
+        cart.setTotalPrice(cart.getTotalPrice().add(product.getPrice().multiply(quantity)));
+//        cart.setTotalPrice(cart.getTotalPrice() + product.getPrice() * cartItemDto.getQuantity());
         CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
         try {
             return cartItemRepository.save(cartItem);

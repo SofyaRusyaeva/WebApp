@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class UsersService {
         } catch (Exception e) {
             throw new ObjectSaveException("Error saving user");
         }
-        cartService.save(new CartDto(0L, user.getUserId()));
+        cartService.save(new CartDto(BigDecimal.ZERO, user.getUserId()));
         return user;
     }
 

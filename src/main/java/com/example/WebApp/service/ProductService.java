@@ -5,8 +5,12 @@ import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Brand;
+import com.example.WebApp.model.Cart;
+import com.example.WebApp.model.CartItem;
 import com.example.WebApp.model.Product;
 import com.example.WebApp.repository.BrandRepository;
+import com.example.WebApp.repository.CartItemRepository;
+import com.example.WebApp.repository.CartRepository;
 import com.example.WebApp.repository.ProductRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +18,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,8 @@ public class ProductService {
 
     ProductRepository productRepository;
     BrandRepository brandRepository;
+    CartRepository cartRepository;
+    CartItemRepository cartItemRepository;
     Mapper mapper;
 
     public List<Product> findAll() {
@@ -57,6 +65,8 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Brand not found with id: " + newProduct.getBrandId()));
 
         oldProduct.setName(newProduct.getName());
+        if (!Objects.equals(oldProduct.getPrice(), newProduct.getPrice()))
+            updateProductPrice(id, newProduct.getPrice(), oldProduct.getPrice());
         oldProduct.setPrice(newProduct.getPrice());
         oldProduct.setBrand(brand);
         oldProduct.setDescription(newProduct.getDescription());
@@ -79,5 +89,21 @@ public class ProductService {
             return productRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
         }
         return productRepository.findAll();
+    }
+
+
+    public void updateProductPrice(Long productId, BigDecimal newPrice, BigDecimal oldPrice) {
+
+        List<CartItem> cartItems = cartItemRepository.findByProduct_ProductId(productId);
+        for (CartItem cartItem : cartItems) {
+            Cart cart = cartItem.getCart();
+            BigDecimal oldTotal = cart.getTotalPrice();
+
+            BigDecimal oldItemTotal = oldPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            BigDecimal newItemTotal = newPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+
+            cart.setTotalPrice(oldTotal.subtract(oldItemTotal).add(newItemTotal));
+            cartRepository.save(cart);
+        }
     }
 }

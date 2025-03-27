@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class CartService {
         Users user = usersRepository.findById(cartDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = mapper.toCart(cartDto, user);
-        cart.setTotalPrice(0L);
+        cart.setTotalPrice(BigDecimal.ZERO);
         try {
             return cartRepository.save(cart);
         } catch (Exception e) {

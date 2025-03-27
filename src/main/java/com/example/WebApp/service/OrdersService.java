@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -71,10 +72,10 @@ public class OrdersService {
         }
     }
 
-    private Long calculateTotalPrice(Cart cart) {
+    private BigDecimal calculateTotalPrice(Cart cart) {
         return cart.getCartItems().stream()
-                .mapToLong(item -> item.getProduct().getPrice() * item.getQuantity())
-                .sum();
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private OrderItem createOrderItem(Orders order, CartItem cartItem) {
@@ -92,7 +93,7 @@ public class OrdersService {
          cartItemRepository.deleteAll(cart.getCartItems());
          cart.getCartItems().clear();
 
-        cart.setTotalPrice(0L);
+        cart.setTotalPrice(BigDecimal.ZERO);
         cartRepository.save(cart);
     }
 

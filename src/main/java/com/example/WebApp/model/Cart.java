@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class Cart {
     Long cartId;
 
     //@NotNull(message = "Total price can't be null")
-    Long totalPrice;
+    BigDecimal totalPrice;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
