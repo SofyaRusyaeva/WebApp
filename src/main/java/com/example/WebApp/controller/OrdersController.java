@@ -21,9 +21,15 @@ public class OrdersController {
 
     OrdersService ordersService;
 
-    @PostMapping("/from_cart/{cartId}")
-    public ResponseEntity<Orders> createOrder(@PathVariable Long cartId) {
-        return ResponseEntity.ok(ordersService.createOrderFromCart(cartId));
+//    @PostMapping("/from_cart/{cartId}")
+//    public ResponseEntity<Orders> createOrder(@PathVariable Long cartId) {
+//        return ResponseEntity.ok(ordersService.createOrderFromCart(cartId));
+//    }
+
+    @PostMapping("/create-from-cart/{userId}")
+    public ResponseEntity<Orders> createOrderFromCart(@PathVariable Long userId) {
+        Orders order = ordersService.createOrderFromCart(userId);
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping()

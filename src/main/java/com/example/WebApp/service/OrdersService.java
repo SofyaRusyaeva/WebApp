@@ -6,9 +6,11 @@ import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.*;
 import com.example.WebApp.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,54 +27,73 @@ public class OrdersService {
     CartItemRepository cartItemRepository;
     Mapper mapper;
 
-    public Orders createOrderFromCart(Long cartId) {
+    @Transactional
+    public Orders createOrderFromCart(Long userId) {
+        try {
+            Users user = usersRepository.findById(userId)
+                    .orElseThrow(() -> new ObjectNotFoundException("User not found with id: " + userId));
 
-        // Получаем корзину пользователя
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+            Cart cart = cartRepository.findByUser_UserId(userId)
+                    .orElseThrow(() -> new ObjectNotFoundException("Cart not found for user id: " + userId));
 
-        // Получаем пользователя
-        Users user = usersRepository.findById(cart.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            if (cart.getCartItems().isEmpty()) {
+                throw new IllegalStateException("Cart is empty");
+            }
 
-        // Получаем все товары в корзине
-        List<CartItem> cartItems = cartItemRepository.findByCart_CartId(cartId);
+            cart.getCartItems().forEach(item -> {
+                if (item.getProduct() == null) {
+                    throw new IllegalStateException("Product not found in cart item");
+                }
+                if (item.getQuantity() <= 0) {
+                    throw new IllegalStateException("Invalid quantity for product: " + item.getProduct().getProductId());
+                }
+            });
 
-        if (cartItems.isEmpty()) {
-            throw new RuntimeException("Cart is empty");
+            Orders order = new Orders();
+            order.setUser(user);
+            order.setDate(LocalDate.now());
+            order.setStatus(OrderStatus.in_progress);
+            order.setTotalPrice(calculateTotalPrice(cart));
+
+            Orders savedOrder = ordersRepository.save(order);
+
+            List<OrderItem> orderItems = cart.getCartItems().stream()
+                    .map(cartItem -> createOrderItem(savedOrder, cartItem))
+                    .toList();
+
+            orderItemRepository.saveAll(orderItems);
+
+            clearCart(userId);
+
+            return savedOrder;
+        } catch (Exception e) {
+            throw new ObjectSaveException("Failed to create order: " + e.getMessage());
         }
-        // Создаем новый заказ
-        Orders order = new Orders();
-        order.setUser(user);
-        order.setDate(LocalDate.now());
-        order.setStatus(OrderStatus.in_progress);
-        order.setTotalPrice(0L);
+    }
 
-        Orders savedOrder = ordersRepository.save(order);
+    private Long calculateTotalPrice(Cart cart) {
+        return cart.getCartItems().stream()
+                .mapToLong(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+    }
 
-        long totalPrice = 0L;
+    private OrderItem createOrderItem(Orders order, CartItem cartItem) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(order);
+        orderItem.setProduct(cartItem.getProduct());
+        orderItem.setQuantity(cartItem.getQuantity());
+        return orderItem;
+    }
 
-        for (CartItem cartItem : cartItems) {
-            Product product = cartItem.getProduct();
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(savedOrder);
-            orderItem.setProduct(product);
-            orderItem.setQuantity(cartItem.getQuantity());
+    public void clearCart(Long userId) {
+        Cart cart = cartRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));
 
-            long itemTotalPrice = product.getPrice() * cartItem.getQuantity();
-            totalPrice += itemTotalPrice;
+         cartItemRepository.deleteAll(cart.getCartItems());
+         cart.getCartItems().clear();
 
-            orderItemRepository.save(orderItem);
-        }
-
-        savedOrder.setTotalPrice(totalPrice);
-        ordersRepository.save(savedOrder);
-
-        cartItemRepository.deleteAll(cartItems);
         cart.setTotalPrice(0L);
         cartRepository.save(cart);
-
-        return savedOrder;
     }
 
     public List<Orders> findAll() {
