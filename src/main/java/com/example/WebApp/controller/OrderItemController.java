@@ -27,10 +27,10 @@ public class OrderItemController {
         return ResponseEntity.ok(orderItemService.findAll());
     }
 
-    @PostMapping()
-    public ResponseEntity<OrderItem> addOrderItem(@Valid @RequestBody OrderItemDto orderItem) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderItemService.save(orderItem));
-    }
+//    @PostMapping()
+//    public ResponseEntity<OrderItem> addOrderItem(@Valid @RequestBody OrderItemDto orderItem) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(orderItemService.save(orderItem));
+//    }
 
 //    @PutMapping("/{orderItemId}")
 //    public ResponseEntity<OrderItem> updateOrderItem(@Valid @RequestBody OrderItemDto orderItem, @PathVariable Long orderItemId) {

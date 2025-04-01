@@ -28,19 +28,19 @@ public class OrderItemService {
 
     public List<OrderItem> findAll() { return orderItemRepository.findAll(); }
 
-    public OrderItem save(OrderItemDto orderItemDto) {
-        Orders order = ordersRepository.findById(orderItemDto.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        Product product = productRepository.findById(orderItemDto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        OrderItem orderItem = mapper.toOrderItem(orderItemDto, order, product);
-        try {
-            return orderItemRepository.save(orderItem);
-        } catch (Exception e) {
-            throw new ObjectSaveException("Error saving brand");
-        }
-    }
+//    public OrderItem save(OrderItemDto orderItemDto) {
+//        Orders order = ordersRepository.findById(orderItemDto.getOrderId())
+//                .orElseThrow(() -> new RuntimeException("Order not found"));
+//        Product product = productRepository.findById(orderItemDto.getProductId())
+//                .orElseThrow(() -> new RuntimeException("Product not found"));
+//
+//        OrderItem orderItem = mapper.toOrderItem(orderItemDto, order, product);
+//        try {
+//            return orderItemRepository.save(orderItem);
+//        } catch (Exception e) {
+//            throw new ObjectSaveException("Error saving brand");
+//        }
+//    }
 
 //    public OrderItem update(OrderItemDto newOrderItem, Long id) {
 //        OrderItem oldOrderItem = orderItemRepository.findById(id)

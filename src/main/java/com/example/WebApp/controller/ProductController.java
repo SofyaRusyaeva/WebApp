@@ -2,6 +2,7 @@ package com.example.WebApp.controller;
 
 import com.example.WebApp.dto.ProductDto;
 import com.example.WebApp.model.Product;
+import com.example.WebApp.model.ProductCategory;
 import com.example.WebApp.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -22,11 +24,22 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getProductsSortedByName(
+    public ResponseEntity<List<Product>> findSortedAndFiltered(
             @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection) {
-        return ResponseEntity.ok(productService.findAllSorted(sortBy, sortDirection));
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false)List<ProductCategory> categories,
+            @RequestParam(required = false)BigDecimal minPrice,
+            @RequestParam(required = false)BigDecimal maxPrice,
+            @RequestParam(required = false)List<String> brandNames) {
+        return ResponseEntity.ok(productService.sortAndFilter(sortBy, sortDirection, categories, minPrice, maxPrice, brandNames));
     }
+
+//    @GetMapping()
+//    public ResponseEntity<List<Product>> getProductsSortedByName(
+//            @RequestParam(defaultValue = "name") String sortBy,
+//            @RequestParam(defaultValue = "asc") String sortDirection) {
+//        return ResponseEntity.ok(productService.findAllSorted(sortBy, sortDirection));
+//    }
 
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable Long productId) {

@@ -4,10 +4,7 @@ import com.example.WebApp.dto.ProductDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
-import com.example.WebApp.model.Brand;
-import com.example.WebApp.model.Cart;
-import com.example.WebApp.model.CartItem;
-import com.example.WebApp.model.Product;
+import com.example.WebApp.model.*;
 import com.example.WebApp.repository.BrandRepository;
 import com.example.WebApp.repository.CartItemRepository;
 import com.example.WebApp.repository.CartRepository;
@@ -33,9 +30,36 @@ public class ProductService {
     CartItemRepository cartItemRepository;
     Mapper mapper;
 
-    public List<Product> findAll() {
+    public List<Product> sortAndFilter (
+            String sortBy, String sortDirection,
+            List<ProductCategory> categories,
+            BigDecimal minPrice, BigDecimal maxPrice,
+            List<String> brandNames) {
+
+        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+        if ("desc".equalsIgnoreCase(sortDirection))
+            sort = Sort.by(Sort.Direction.DESC, sortBy);
+
+        if(categories != null && !categories.isEmpty() && minPrice != null && maxPrice!= null && brandNames != null && !brandNames.isEmpty())
+            return productRepository.findByCategoryInAndPriceBetweenAndBrand_NameIn(categories, minPrice, maxPrice, brandNames, sort);
+        if(minPrice != null && maxPrice!= null && brandNames != null && !brandNames.isEmpty())
+            return productRepository.findByPriceBetweenAndBrand_NameIn(minPrice, maxPrice, brandNames, sort);
+        if(categories != null && !categories.isEmpty() && brandNames != null && !brandNames.isEmpty())
+            return productRepository.findByCategoryInAndBrand_NameIn(categories, brandNames, sort);
+        if(categories != null && !categories.isEmpty() && minPrice != null && maxPrice!= null)
+            return productRepository.findByCategoryInAndPriceBetween(categories, minPrice, maxPrice, sort);
+        if(brandNames != null && !brandNames.isEmpty())
+            return productRepository.findByBrand_NameIn(brandNames, sort);
+        if(categories!= null && !categories.isEmpty())
+            return productRepository.findByCategoryIn(categories, sort);
+        if(minPrice != null && maxPrice!= null)
+            return productRepository.findByPriceBetween(minPrice, maxPrice, sort);
         return productRepository.findAll();
     }
+
+//    public List<Product> findAll() {
+//        return productRepository.findAll();
+//    }
 
     public Product findById(Long productId) {
         return productRepository.findById(productId)
@@ -75,21 +99,21 @@ public class ProductService {
         return productRepository.save(oldProduct);
     }
 
-    public List<Product> findAllSorted(String sortBy, String sortDirection) {
-        if ("desc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
-            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
-        }
-        if ("asc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
-            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-        }
-        if ("desc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
-            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
-        }
-        if ("asc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
-            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
-        }
-        return productRepository.findAll();
-    }
+//    public List<Product> findAllSorted(String sortBy, String sortDirection) {
+//        if ("desc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
+//            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
+//        }
+//        if ("asc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {
+//            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+//        }
+//        if ("desc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
+//            return productRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
+//        }
+//        if ("asc".equalsIgnoreCase(sortDirection) && "price".equalsIgnoreCase(sortBy)) {
+//            return productRepository.findAll(Sort.by(Sort.Direction.ASC, "price"));
+//        }
+//        return productRepository.findAll();
+//    }
 
 
     public void updateProductPrice(Long productId, BigDecimal newPrice, BigDecimal oldPrice) {
