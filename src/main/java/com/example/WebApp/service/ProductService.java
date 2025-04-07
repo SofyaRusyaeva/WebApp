@@ -1,6 +1,7 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.ProductDto;
+import com.example.WebApp.dto.ProductResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,40 +32,44 @@ public class ProductService {
     CartItemRepository cartItemRepository;
     Mapper mapper;
 
-    public List<Product> sortAndFilter (
+    public List<ProductResponseDto> sortAndFilter(
             String sortBy, String sortDirection,
             List<ProductCategory> categories,
             BigDecimal minPrice, BigDecimal maxPrice,
             List<String> brandNames) {
 
+        List<Product> products;
         Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
         if ("desc".equalsIgnoreCase(sortDirection))
             sort = Sort.by(Sort.Direction.DESC, sortBy);
 
         if(categories != null && !categories.isEmpty() && minPrice != null && maxPrice!= null && brandNames != null && !brandNames.isEmpty())
-            return productRepository.findByCategoryInAndPriceBetweenAndBrand_NameIn(categories, minPrice, maxPrice, brandNames, sort);
-        if(minPrice != null && maxPrice!= null && brandNames != null && !brandNames.isEmpty())
-            return productRepository.findByPriceBetweenAndBrand_NameIn(minPrice, maxPrice, brandNames, sort);
-        if(categories != null && !categories.isEmpty() && brandNames != null && !brandNames.isEmpty())
-            return productRepository.findByCategoryInAndBrand_NameIn(categories, brandNames, sort);
-        if(categories != null && !categories.isEmpty() && minPrice != null && maxPrice!= null)
-            return productRepository.findByCategoryInAndPriceBetween(categories, minPrice, maxPrice, sort);
-        if(brandNames != null && !brandNames.isEmpty())
-            return productRepository.findByBrand_NameIn(brandNames, sort);
-        if(categories!= null && !categories.isEmpty())
-            return productRepository.findByCategoryIn(categories, sort);
-        if(minPrice != null && maxPrice!= null)
-            return productRepository.findByPriceBetween(minPrice, maxPrice, sort);
-        return productRepository.findAll();
+            products = productRepository.findByCategoryInAndPriceBetweenAndBrand_NameIn(categories, minPrice, maxPrice, brandNames, sort);
+        else if (minPrice != null && maxPrice != null && brandNames != null && !brandNames.isEmpty())
+            products = productRepository.findByPriceBetweenAndBrand_NameIn(minPrice, maxPrice, brandNames, sort);
+        else if (categories != null && !categories.isEmpty() && brandNames != null && !brandNames.isEmpty())
+            products = productRepository.findByCategoryInAndBrand_NameIn(categories, brandNames, sort);
+        else if (categories != null && !categories.isEmpty() && minPrice != null && maxPrice != null)
+            products = productRepository.findByCategoryInAndPriceBetween(categories, minPrice, maxPrice, sort);
+        else if (brandNames != null && !brandNames.isEmpty())
+            products = productRepository.findByBrand_NameIn(brandNames, sort);
+        else if (categories != null && !categories.isEmpty())
+            products = productRepository.findByCategoryIn(categories, sort);
+        else if (minPrice != null && maxPrice != null)
+            products = productRepository.findByPriceBetween(minPrice, maxPrice, sort);
+        else products = productRepository.findAll();
+        return products.stream()
+                .map(mapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
 //    public List<Product> findAll() {
 //        return productRepository.findAll();
 //    }
 
-    public Product findById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productId)));
+    public ProductResponseDto findById(Long productId) {
+        return mapper.toProductResponse(productRepository.findById(productId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productId))));
     }
 
     public Product save(ProductDto productDto) {
@@ -128,6 +134,25 @@ public class ProductService {
 
             cart.setTotalPrice(oldTotal.subtract(oldItemTotal).add(newItemTotal));
             cartRepository.save(cart);
+        }
+    }
+
+    public CartItem addProductToCart(Long productId) {
+        Long userId = 1L; // ИЗ ТЕКУЩЕЙ СЕССИИ
+        Cart cart = cartRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found with id: " + userId));
+        List<CartItem> item = cartItemRepository.findByCart_CartIdAndProduct_ProductId(cart.getCartId(), productId);
+        if (item.isEmpty()) {
+            CartItem cartItem = new CartItem();
+            cartItem.setQuantity(1L);
+            cartItem.setProduct(productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId)));
+            cartItem.setCart(cart);
+            return cartItemRepository.save(cartItem);
+        } else {
+            CartItem existingItem = item.get(0);
+            existingItem.setQuantity(existingItem.getQuantity() + 1);
+            return cartItemRepository.save(existingItem);
         }
     }
 }

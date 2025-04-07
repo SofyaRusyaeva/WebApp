@@ -1,11 +1,7 @@
 package com.example.WebApp.service;
 
-import com.example.WebApp.dto.CartItemDto;
-import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
-import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.CartItem;
-import com.example.WebApp.model.Product;
 import com.example.WebApp.repository.CartItemRepository;
 import com.example.WebApp.repository.CartRepository;
 import com.example.WebApp.repository.ProductRepository;
@@ -14,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -28,38 +23,32 @@ public class CartItemService {
 
     public List<CartItem> findAll() { return cartItemRepository.findAll(); }
 
-    public CartItem save(CartItemDto cartItemDto) {
-        Cart cart = cartRepository.findById(cartItemDto.getCartId())
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
-        Product product = productRepository.findById(cartItemDto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        BigDecimal quantity = BigDecimal.valueOf(cartItemDto.getQuantity());
-        cart.setTotalPrice(cart.getTotalPrice().add(product.getPrice().multiply(quantity)));
-        CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
-        try {
-            return cartItemRepository.save(cartItem);
-        } catch (Exception e) {
-            throw new ObjectSaveException("Error saving brand");
-        }
-    }
+//    public CartItem save(CartItemDto cartItemDto) {
+//        Cart cart = cartRepository.findById(cartItemDto.getCartId())
+//                .orElseThrow(() -> new RuntimeException("Cart not found"));
+//        Product product = productRepository.findById(cartItemDto.getProductId())
+//                .orElseThrow(() -> new RuntimeException("Product not found"));
+//
+//        BigDecimal quantity = BigDecimal.valueOf(cartItemDto.getQuantity());
+//        cart.setTotalPrice(cart.getTotalPrice().add(product.getPrice().multiply(quantity)));
+//        CartItem cartItem = mapper.toCartItem(cartItemDto, cart, product);
+//        try {
+//            return cartItemRepository.save(cartItem);
+//        } catch (Exception e) {
+//            throw new ObjectSaveException("Error saving brand");
+//        }
+//    }
 
-    public CartItem update(CartItemDto newCartItem, Long id) {
+    public CartItem update(Long id) {
         CartItem oldCartItem = cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
 
-        Product product = productRepository.findById(newCartItem.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + newCartItem.getProductId()));
-
-        Cart cart = cartRepository.findById(newCartItem.getProductId())
-                .orElseThrow(() -> new RuntimeException("Cart not found with id: " + newCartItem.getCartId()));
-
-        oldCartItem.setCart(cart);
-        oldCartItem.setProduct(product);
-        oldCartItem.setQuantity(newCartItem.getQuantity());
+        oldCartItem.setQuantity(oldCartItem.getQuantity() + 1);
 
         return cartItemRepository.save(oldCartItem);
     }
+
 
     public void delete(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);

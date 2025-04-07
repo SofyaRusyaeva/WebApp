@@ -1,14 +1,11 @@
 package com.example.WebApp.controller;
 
 
-import com.example.WebApp.dto.CartItemDto;
 import com.example.WebApp.model.CartItem;
 import com.example.WebApp.service.CartItemService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,14 +24,14 @@ public class CartItemController {
         return ResponseEntity.ok(cartItemService.findAll());
     }
 
-    @PostMapping()
-    public ResponseEntity<CartItem> addCartItem(@Valid @RequestBody CartItemDto cartItem) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartItemService.save(cartItem));
-    }
+//    @PostMapping()
+//    public ResponseEntity<CartItem> addCartItem(@Valid @RequestBody CartItemDto cartItem) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(cartItemService.save(cartItem));
+//    }
 
     @PutMapping("/{cartItemId}")
-    public ResponseEntity<CartItem> updateCartItem(@Valid @RequestBody CartItemDto cartItem, @PathVariable Long cartItemId) {
-        return ResponseEntity.ok(cartItemService.update(cartItem, cartItemId));
+    public ResponseEntity<CartItem> updateCartItem(@PathVariable Long cartItemId) {
+        return ResponseEntity.ok(cartItemService.update(cartItemId));
     }
 
     @DeleteMapping("/{cartItemId}")

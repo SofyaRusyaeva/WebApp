@@ -1,14 +1,13 @@
 package com.example.WebApp.controller;
 
-import com.example.WebApp.dto.OrdersDto;
+import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.OrderStatus;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.service.OrdersService;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +30,8 @@ public class OrdersController {
             @RequestParam(required = false) List<OrderStatus> statuses,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @RequestParam(required = false)BigDecimal minPrice,
-            @RequestParam(required = false)BigDecimal maxPrice) {
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
         return ResponseEntity.ok(ordersService.sortAndFilter(sortBy, sortDirection, statuses, startDate, endDate, minPrice, maxPrice));
     }
 
@@ -42,24 +41,18 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.findByUserId(userId));
     }
 
-//    @GetMapping("/{ordersId}")
-//    public ResponseEntity<Orders> getOrderById(@PathVariable Long ordersId) {
-//        return ResponseEntity.ok(ordersService.findByOrderId(ordersId));
-//    }
-
-//    @PostMapping()
-//    public ResponseEntity<Orders> addOrders(@Valid @RequestBody OrdersDto orders) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(ordersService.save(orders));
-//    }
-
-    @PutMapping("/{ordersId}")
-    public ResponseEntity<Orders> updateOrder(@Valid @RequestBody OrdersDto order, @PathVariable Long ordersId) {
-        return ResponseEntity.ok(ordersService.update(order, ordersId));
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<List<ItemResponseDto>> getOrderItems(@PathVariable Long orderId) {
+        return ResponseEntity.ok(ordersService.findByOrderId(orderId));
     }
 
-//    @DeleteMapping("/{ordersId}")
-//    public ResponseEntity<?> deleteOrders(@PathVariable Long ordersId) {
-//        ordersService.delete(ordersId);
-//        return ResponseEntity.noContent().build();
-//    }
+    @GetMapping("/{userId}/{orderId}")
+    public ResponseEntity<List<ItemResponseDto>> getOrderItems(@PathVariable Long userId, @PathVariable Long orderId) {
+        return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(userId, orderId));
+    }
+
+    @PatchMapping("/{ordersId}")
+    public ResponseEntity<Orders> updateOrders(@RequestBody @NotNull OrderStatus status, @PathVariable Long ordersId) {
+        return ResponseEntity.ok(ordersService.update(status, ordersId));
+    }
 }

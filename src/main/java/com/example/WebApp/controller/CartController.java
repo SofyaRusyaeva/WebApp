@@ -2,8 +2,10 @@ package com.example.WebApp.controller;
 
 
 import com.example.WebApp.dto.CartDto;
+import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.Orders;
+import com.example.WebApp.service.CartItemService;
 import com.example.WebApp.service.CartService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -22,6 +24,7 @@ import java.util.List;
 public class CartController {
 
     CartService cartService;
+    CartItemService cartItemService;
 
     @PostMapping("/createOrder/{userId}")
     public ResponseEntity<Orders> createOrderFromCart(@PathVariable Long userId) {
@@ -40,9 +43,14 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
-        return ResponseEntity.ok(cartService.findByUserId(userId));
+    public ResponseEntity<List<ItemResponseDto>> getCartItems(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.findByCartId(userId));
     }
+
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
+//        return ResponseEntity.ok(cartService.findByUserId(userId));
+//    }
 
 //    @PutMapping("/{cartId}")
 //    public ResponseEntity<Cart> updateCart(@Valid @RequestBody CartDto cart, @PathVariable Long cartId) {

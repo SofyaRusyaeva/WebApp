@@ -1,6 +1,8 @@
 package com.example.WebApp.controller;
 
 import com.example.WebApp.dto.ProductDto;
+import com.example.WebApp.dto.ProductResponseDto;
+import com.example.WebApp.model.CartItem;
 import com.example.WebApp.model.Product;
 import com.example.WebApp.model.ProductCategory;
 import com.example.WebApp.service.ProductService;
@@ -24,7 +26,7 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> findSortedAndFiltered(
+    public ResponseEntity<List<ProductResponseDto>> findSortedAndFiltered(
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection,
             @RequestParam(required = false)List<ProductCategory> categories,
@@ -42,7 +44,7 @@ public class ProductController {
 //    }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.findById(productId));
     }
 
@@ -50,6 +52,11 @@ public class ProductController {
     @PostMapping()
     public ResponseEntity<Product> addProduct(@Valid @RequestBody ProductDto product) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
+    }
+
+    @PostMapping("/{productId}")
+    public ResponseEntity<CartItem> createCartItem(@PathVariable Long productId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProductToCart(productId));
     }
 
     @PutMapping("/{productId}")

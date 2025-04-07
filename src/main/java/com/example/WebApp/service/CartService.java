@@ -1,6 +1,7 @@
 package com.example.WebApp.service;
 
 import com.example.WebApp.dto.CartDto;
+import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,12 @@ public class CartService {
     public Cart findByUserId(Long userId) {
         return cartRepository.findByUser_UserId(userId)
                 .orElseThrow(()-> new ObjectNotFoundException("Cart not found"));
+    }
+
+    public List<ItemResponseDto> findByCartId(Long cartId) {
+        return cartItemRepository.findByCart_CartId(cartId).stream()
+                .map(mapper::toCartItemResponse)
+                .collect(Collectors.toList());
     }
 
     public Cart save(CartDto cartDto) {
@@ -123,6 +131,7 @@ public class CartService {
         return orderItem;
     }
 
+    @Transactional
     public void clearCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));

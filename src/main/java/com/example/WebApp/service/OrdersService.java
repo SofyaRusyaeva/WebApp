@@ -1,10 +1,12 @@
 package com.example.WebApp.service;
 
-import com.example.WebApp.dto.OrdersDto;
+import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.mapper.Mapper;
-import com.example.WebApp.model.*;
-import com.example.WebApp.repository.*;
+import com.example.WebApp.model.OrderStatus;
+import com.example.WebApp.model.Orders;
+import com.example.WebApp.repository.OrderItemRepository;
+import com.example.WebApp.repository.OrdersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,13 +16,14 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrdersService {
     OrdersRepository ordersRepository;
-    UsersRepository usersRepository;
+    OrderItemRepository orderItemRepository;
     Mapper mapper;
 
 //    public List<Orders> findAll() {
@@ -58,6 +61,19 @@ public class OrdersService {
         return ordersRepository.findByUser_UserId(userId);
     }
 
+    public List<ItemResponseDto> findByOrderId(Long orderId) {
+        return orderItemRepository.findByOrder_OrderId(orderId).stream()
+                .map(mapper::toOrderItemResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ItemResponseDto> findByOrderIdAndUserId(Long userId, Long orderId) {
+        return orderItemRepository.findByOrder_OrderIdAndOrder_User_UserId(orderId, userId)
+                .stream()
+                .map(mapper::toOrderItemResponse)
+                .collect(Collectors.toList());
+    }
+
 //    public Orders findByOrderId(Long orderId) {
 //        return ordersRepository.findById(orderId)
 //                .orElseThrow(() -> new ObjectNotFoundException(String.format("Order %s not found", orderId)));
@@ -75,17 +91,10 @@ public class OrdersService {
 //        }
 //    }
 
-    public Orders update(OrdersDto newOrder, Long id) {
+    public Orders update(OrderStatus status, Long id) {
         Orders oldOrder = ordersRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Order %s not found", id)));
-
-        Users user = usersRepository.findById(newOrder.getUserId())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("User %s not found", newOrder.getUserId())));
-
-        oldOrder.setUser(user);
-        oldOrder.setTotalPrice(newOrder.getTotalPrice());
-        oldOrder.setDate(newOrder.getDate());
-        oldOrder.setStatus(newOrder.getStatus());
+        oldOrder.setStatus(status);
 
         return ordersRepository.save(oldOrder);
     }
