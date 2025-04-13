@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
+// TODO: обработка 500 ошибки с некорректным url
+// TODO: обработка некорректного значения из enum (400 вместо 500)
+// TODO: обработка 500 ошибки при неверном пароле
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ObjectNotFoundException.class)

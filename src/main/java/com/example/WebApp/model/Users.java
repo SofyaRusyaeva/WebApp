@@ -3,7 +3,6 @@ package com.example.WebApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +29,9 @@ public class Users {
     String password;
 
     String phone;
+
+    @Enumerated(EnumType.STRING)
+    Role role = Role.USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore

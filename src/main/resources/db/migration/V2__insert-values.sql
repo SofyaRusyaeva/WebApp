@@ -14,8 +14,8 @@ INSERT INTO product (name, description, category, brand_id, price) VALUES ('eyel
 INSERT INTO product (name, description, category, brand_id, price) VALUES ('cream', 'spf', 'sun_care', 4, 1800);
 INSERT INTO product (name, description, category, brand_id, price) VALUES ('Lost cherry', 'sweet', 'perfume', 5, 31500);
 
-INSERT INTO cart (total_price, user_id) VALUES (2000, 1);
-INSERT INTO cart (total_price, user_id) VALUES (1500, 2);
+INSERT INTO cart (total_price, user_id) VALUES (0, 1);
+INSERT INTO cart (total_price, user_id) VALUES (0, 2);
 
 INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (1, 2, 5);
 INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (1, 1, 2);

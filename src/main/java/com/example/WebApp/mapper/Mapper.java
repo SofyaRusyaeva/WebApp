@@ -66,6 +66,7 @@ public class Mapper {
         user.setPhone(dto.getPhone());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setRole(Role.USER);
         return user;
     }
 
