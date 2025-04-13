@@ -1,17 +1,14 @@
 package com.example.WebApp.exeption;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.Map;
-
-// TODO: обработка 500 ошибки с некорректным url
-// TODO: обработка некорректного значения из enum (400 вместо 500)
-// TODO: обработка 500 ошибки при неверном пароле
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -61,6 +58,36 @@ public class GlobalExceptionHandler {
                 Map.of(
                         "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "message", "Internal error"
+                )
+        );
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                        "status", HttpStatus.NOT_FOUND.value(),
+                        "message", "The requested URL was not found"
+                )
+        );
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity<Map<String, Object>> handleEnumConversionError(Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                        "status", HttpStatus.BAD_REQUEST.value(),
+                        "message", "Invalid value provided"
+                )
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                Map.of(
+                        "status", HttpStatus.UNAUTHORIZED.value(),
+                        "message", e.getMessage()
                 )
         );
     }

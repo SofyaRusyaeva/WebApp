@@ -17,11 +17,14 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secret;
 
+    @Value("${jwt.expiration}")
+    private long expiration;
+
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 час
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
