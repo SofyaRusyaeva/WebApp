@@ -4,12 +4,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-// TODO: logout
+// TODO: logout(Черный список accessToken)
 // TODO: настройка environment variables
 // TODO: выводить стоимость корзины
-// TODO: починить login
 // TODO: Проверка валидности токена
 // TODO: Изменение пароля
+// TODO: Обработка ошибок
 
 // OrderItemController и OrderItemService не нужен
 

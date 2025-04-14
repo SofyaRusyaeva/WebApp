@@ -31,13 +31,13 @@ public class CartItemController {
 //    }
 
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{cartItemId}")
+    @PutMapping("/{cartItemId}/inc")
     public ResponseEntity<CartItem> increaseQuantity(@PathVariable Long cartItemId) {
         return ResponseEntity.ok(cartItemService.update(cartItemId, true));
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{cartItemId}")
+    @PutMapping("/{cartItemId}/dec")
     public ResponseEntity<CartItem> decreaseQuantity(@PathVariable Long cartItemId) {
         return ResponseEntity.ok(cartItemService.update(cartItemId, false));
     }

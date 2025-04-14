@@ -1,12 +1,23 @@
 package com.example.WebApp.controller;
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.AuthDto;
+import com.example.WebApp.dto.JwtResponseDto;
+import com.example.WebApp.dto.RefreshTokenDto;
 import com.example.WebApp.dto.UsersDto;
+import com.example.WebApp.exeption.ObjectNotFoundException;
+import com.example.WebApp.model.RefreshToken;
+import com.example.WebApp.model.Users;
 import com.example.WebApp.service.AuthService;
+import com.example.WebApp.service.CustomUserDetailsService;
+import com.example.WebApp.service.RefreshTokenService;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +25,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     AuthService authService;
+    RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UsersDto userDto) {
@@ -24,19 +37,30 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        AuthDto authDto = new AuthDto(username, password);
-        String token = authService.authenticate(authDto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<JwtResponseDto> login(@RequestBody AuthDto authDto) {
+        return ResponseEntity.ok(authService.authenticate(authDto));
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponseDto> refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
+        return ResponseEntity.ok(refreshTokenService.refresh(refreshTokenDto));
     }
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
+        refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
+                .ifPresent(refreshTokenService::delete);
+        return ResponseEntity.ok().build();
     }
+
+
+//    @GetMapping("/login")
+//    public String loginPage() {
+//        return "login";
+//    }
+//
+//    @GetMapping("/register")
+//    public String registerPage() {
+//        return "register";
+//    }
 }

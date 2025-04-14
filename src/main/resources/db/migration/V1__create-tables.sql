@@ -60,3 +60,11 @@ CREATE TABLE IF NOT EXISTS cart_item (
     CONSTRAINT fk_cart_cartitem FOREIGN KEY (cart_id) REFERENCES cart(cart_id) ON DELETE CASCADE,
     CONSTRAINT fk_product_cartitem FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
+
+CREATE TABLE IF NOT EXISTS refresh_token (
+    token_id SERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+)

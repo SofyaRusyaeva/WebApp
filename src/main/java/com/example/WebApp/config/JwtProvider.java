@@ -21,10 +21,12 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private long expiration;
+    @Value("${jwt.accessExpiration}")
+    private long accessExpiration;
+    @Value("${jwt.refreshExpiration}")
+    private long refreshExpiration;
 
-    public String generateToken(UserDetails userDetails, Long userId) {
+    public String generateAccessToken(UserDetails userDetails, Long userId) {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -35,7 +37,16 @@ public class JwtProvider {
                 .setClaims(claims)
 //                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpiration))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -49,10 +60,22 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return username.equals(userDetails.getUsername());
+//    public boolean validateToken(String token, UserDetails userDetails) {
+//        String username = extractUsername(token);
+//        return username.equals(userDetails.getUsername());
+//    }
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
