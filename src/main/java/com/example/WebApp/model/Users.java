@@ -31,7 +31,7 @@ public class Users {
     String phone;
 
     @Enumerated(EnumType.STRING)
-    Role role = Role.USER;
+    Role role = Role.ROLE_USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore

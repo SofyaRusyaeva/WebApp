@@ -1,5 +1,6 @@
 package com.example.WebApp.controller;
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.OrderStatus;
 import com.example.WebApp.model.Orders;
@@ -9,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,7 +24,10 @@ import java.util.List;
 public class OrdersController {
 
     OrdersService ordersService;
+    JwtProvider jwtProvider;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<List<Orders>> findSortedAndFiltered(
             @RequestParam(defaultValue = "date") String sortBy,
@@ -35,22 +40,27 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.sortAndFilter(sortBy, sortDirection, statuses, startDate, endDate, minPrice, maxPrice));
     }
 
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Orders>> getUserOrders(@PathVariable Long userId) {
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me")
+    public ResponseEntity<List<Orders>> getUserOrders() {
+        Long userId = jwtProvider.getCurrentUserId();
         return ResponseEntity.ok(ordersService.findByUserId(userId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/order/{orderId}")
     public ResponseEntity<List<ItemResponseDto>> getOrderItems(@PathVariable Long orderId) {
         return ResponseEntity.ok(ordersService.findByOrderId(orderId));
     }
 
-    @GetMapping("/{userId}/{orderId}")
-    public ResponseEntity<List<ItemResponseDto>> getOrderItems(@PathVariable Long userId, @PathVariable Long orderId) {
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me/{orderId}")
+    public ResponseEntity<List<ItemResponseDto>> getMyOrderItems(@PathVariable Long orderId) {
+        Long userId = jwtProvider.getCurrentUserId();
         return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(userId, orderId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{ordersId}")
     public ResponseEntity<Orders> updateOrders(@RequestBody @NotNull OrderStatus status, @PathVariable Long ordersId) {
         return ResponseEntity.ok(ordersService.update(status, ordersId));

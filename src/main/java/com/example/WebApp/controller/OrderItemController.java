@@ -22,10 +22,10 @@ public class OrderItemController {
 
     OrderItemService orderItemService;
 
-    @GetMapping()
-    public ResponseEntity<List<OrderItem>> getOrderItems() {
-        return ResponseEntity.ok(orderItemService.findAll());
-    }
+//    @GetMapping()
+//    public ResponseEntity<List<OrderItem>> getOrderItems() {
+//        return ResponseEntity.ok(orderItemService.findAll());
+//    }
 
 //    @PostMapping()
 //    public ResponseEntity<OrderItem> addOrderItem(@Valid @RequestBody OrderItemDto orderItem) {

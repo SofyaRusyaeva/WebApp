@@ -40,11 +40,15 @@ public class CartItemService {
 //        }
 //    }
 
-    public CartItem update(Long id) {
+    public CartItem update(Long id, boolean increase) {
         CartItem oldCartItem = cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
 
-        oldCartItem.setQuantity(oldCartItem.getQuantity() + 1);
+        if (increase)
+            oldCartItem.setQuantity(oldCartItem.getQuantity() + 1);
+        else
+            if (oldCartItem.getQuantity() > 0)
+                oldCartItem.setQuantity(oldCartItem.getQuantity() - 1);
 
         return cartItemRepository.save(oldCartItem);
     }

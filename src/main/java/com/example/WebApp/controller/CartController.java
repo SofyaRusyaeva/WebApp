@@ -1,18 +1,18 @@
 package com.example.WebApp.controller;
 
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.CartDto;
 import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.service.CartItemService;
 import com.example.WebApp.service.CartService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,33 +24,39 @@ import java.util.List;
 public class CartController {
 
     CartService cartService;
-    CartItemService cartItemService;
+    JwtProvider jwtProvider;
 
-    @PostMapping("/createOrder/{userId}")
-    public ResponseEntity<Orders> createOrderFromCart(@PathVariable Long userId) {
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/createOrder")
+    public ResponseEntity<Orders> createOrderFromCart() {
+        Long userId= jwtProvider.getCurrentUserId();
         Orders order = cartService.createOrderFromCart(userId);
         return ResponseEntity.ok(order);
     }
 
-    @PostMapping()
-    public ResponseEntity<Cart> addCart(@Valid @RequestBody CartDto cart) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
-    }
+//    @PostMapping()
+//    public ResponseEntity<Cart> addCart(@Valid @RequestBody CartDto cart) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
+//    }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<List<Cart>> getCarts() {
         return ResponseEntity.ok(cartService.findAll());
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<ItemResponseDto>> getCartItems(@PathVariable Long userId) {
-        return ResponseEntity.ok(cartService.findByCartId(userId));
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me")
+    public ResponseEntity<List<ItemResponseDto>> getCartItems() {
+        Long userId= jwtProvider.getCurrentUserId();
+        return ResponseEntity.ok(cartService.findUserId(userId));
     }
 
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
-//        return ResponseEntity.ok(cartService.findByUserId(userId));
-//    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.findByUserId(userId));
+    }
 
 //    @PutMapping("/{cartId}")
 //    public ResponseEntity<Cart> updateCart(@Valid @RequestBody CartDto cart, @PathVariable Long cartId) {

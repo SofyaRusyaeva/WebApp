@@ -3,9 +3,15 @@ package com.example.WebApp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-// TODO: извлечение id из токена
-// TODO: продумать логику с ролями, кому какой запрос доступен
-// TODO: token expiration брать из application properties
+
+// TODO: logout
+// TODO: настройка environment variables
+// TODO: выводить стоимость корзины
+// TODO: починить login
+// TODO: Проверка валидности токена
+// TODO: Изменение пароля
+
+// OrderItemController и OrderItemService не нужен
 
 @SpringBootApplication
 public class WebAppApplication {

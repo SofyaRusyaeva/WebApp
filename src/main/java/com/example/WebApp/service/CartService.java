@@ -38,8 +38,16 @@ public class CartService {
                 .orElseThrow(()-> new ObjectNotFoundException("Cart not found"));
     }
 
-    public List<ItemResponseDto> findByCartId(Long cartId) {
-        return cartItemRepository.findByCart_CartId(cartId).stream()
+//    public List<ItemResponseDto> findByCartId(Long cartId) {
+//        return cartItemRepository.findByCart_CartId(cartId).stream()
+//                .map(mapper::toCartItemResponse)
+//                .collect(Collectors.toList());
+//    }
+
+    public List<ItemResponseDto> findUserId(Long userId) {
+        Cart cart = cartRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));
+        return cartItemRepository.findByCart_CartId(cart.getCartId()).stream()
                 .map(mapper::toCartItemResponse)
                 .collect(Collectors.toList());
     }

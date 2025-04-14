@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(15),
-    role VARCHAR(255) DEFAULT 'USER' CHECK (role IN ('USER', 'ADMIN')),
+    role VARCHAR(255) DEFAULT 'ROLE_USER' CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN')),
     CONSTRAINT unique_email UNIQUE (email)
 );
 

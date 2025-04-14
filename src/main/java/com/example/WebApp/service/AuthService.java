@@ -6,10 +6,12 @@ import com.example.WebApp.dto.CartDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.exeption.DuplicateException;
 import com.example.WebApp.exeption.InvalidCredentialsException;
+import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Users;
 import com.example.WebApp.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,7 +39,7 @@ public class AuthService {
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
 
-//    @Transactional
+    @Transactional
     public Users save(UsersDto userDto) {
         Users user = mapper.toUsers(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -60,8 +62,10 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid email or password");
         }
+        Users user = usersRepository.findByEmail(authDto.getEmail())
+                        .orElseThrow(() -> new ObjectNotFoundException("User not found"));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(authDto.getEmail());
-        return jwtProvider.generateToken(userDetails.getUsername());
+        return jwtProvider.generateToken(userDetails, user.getUserId());
     }
 }

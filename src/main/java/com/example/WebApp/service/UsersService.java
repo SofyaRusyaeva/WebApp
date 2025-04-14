@@ -26,25 +26,24 @@ public class UsersService {
 
     CartService cartService;
     UsersRepository usersRepository;
-    CartRepository cartRepository;
     Mapper mapper;
     PasswordEncoder passwordEncoder;
 
     public List<Users> findAll() { return usersRepository.findAll(); }
 
-    public Users save(UsersDto userDto) {
-        Users user = mapper.toUsers(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        try {
-            usersRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
-        } catch (Exception e) {
-            throw new ObjectSaveException("Error saving user");
-        }
-        cartService.save(new CartDto(BigDecimal.ZERO, user.getUserId()));
-        return user;
-    }
+//    public Users save(UsersDto userDto) {
+//        Users user = mapper.toUsers(userDto);
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        try {
+//            usersRepository.save(user);
+//        } catch (DataIntegrityViolationException e) {
+//            throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
+//        } catch (Exception e) {
+//            throw new ObjectSaveException("Error saving user");
+//        }
+//        cartService.save(new CartDto(BigDecimal.ZERO, user.getUserId()));
+//        return user;
+//    }
 
     public void delete(Long userId) {
         usersRepository.deleteById(userId);
