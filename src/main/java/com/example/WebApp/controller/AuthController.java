@@ -9,6 +9,7 @@ import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.model.RefreshToken;
 import com.example.WebApp.model.Users;
 import com.example.WebApp.service.AuthService;
+import com.example.WebApp.service.BlackListService;
 import com.example.WebApp.service.CustomUserDetailsService;
 import com.example.WebApp.service.RefreshTokenService;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,9 @@ public class AuthController {
 
     AuthService authService;
     RefreshTokenService refreshTokenService;
+    BlackListService blackListService;
+
+    JwtProvider jwtProvider;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UsersDto userDto) {
@@ -47,9 +51,11 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
         refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
                 .ifPresent(refreshTokenService::delete);
+        String accessToken = authHeader.substring(7);
+        blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
         return ResponseEntity.ok().build();
     }
 

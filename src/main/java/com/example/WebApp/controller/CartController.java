@@ -3,10 +3,8 @@ package com.example.WebApp.controller;
 
 import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.CartDto;
-import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.Cart;
 import com.example.WebApp.model.Orders;
-import com.example.WebApp.service.CartItemService;
 import com.example.WebApp.service.CartService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +22,11 @@ import java.util.List;
 public class CartController {
 
     CartService cartService;
-    JwtProvider jwtProvider;
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/createOrder")
     public ResponseEntity<Orders> createOrderFromCart() {
-        Long userId= jwtProvider.getCurrentUserId();
-        Orders order = cartService.createOrderFromCart(userId);
+        Orders order = cartService.createOrderFromCart();
         return ResponseEntity.ok(order);
     }
 
@@ -47,9 +43,8 @@ public class CartController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
-    public ResponseEntity<List<ItemResponseDto>> getCartItems() {
-        Long userId= jwtProvider.getCurrentUserId();
-        return ResponseEntity.ok(cartService.findUserId(userId));
+    public ResponseEntity<CartDto> getCartItems() {
+        return ResponseEntity.ok(cartService.findMyCart());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -61,11 +56,12 @@ public class CartController {
 //    @PutMapping("/{cartId}")
 //    public ResponseEntity<Cart> updateCart(@Valid @RequestBody CartDto cart, @PathVariable Long cartId) {
 //        return ResponseEntity.ok(cartService.update(cart, cartId));
-//    }
 
-    @DeleteMapping("/{cartId}")
-    public ResponseEntity<?> clearCart (@PathVariable Long cartId) {
-        cartService.clearCart(cartId);
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/me")
+    public ResponseEntity<?> clearCart () {
+        cartService.clearCart();
         return ResponseEntity.noContent().build();
     }
 }

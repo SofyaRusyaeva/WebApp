@@ -1,9 +1,9 @@
 package com.example.WebApp.service;
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.CartDto;
 import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
-import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.*;
 import com.example.WebApp.repository.*;
@@ -28,6 +28,8 @@ public class CartService {
     CartItemRepository cartItemRepository;
     OrdersRepository ordersRepository;
     Mapper mapper;
+    JwtProvider jwtProvider;
+
 
     public List<Cart> findAll() {
         return cartRepository.findAll();
@@ -44,24 +46,25 @@ public class CartService {
 //                .collect(Collectors.toList());
 //    }
 
-    public List<ItemResponseDto> findUserId(Long userId) {
+    public CartDto findMyCart() {
+        Long userId= jwtProvider.getCurrentUserId();
         Cart cart = cartRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));
-        return cartItemRepository.findByCart_CartId(cart.getCartId()).stream()
+        List<ItemResponseDto> items = cartItemRepository.findByCart_CartId(cart.getCartId()).stream()
                 .map(mapper::toCartItemResponse)
                 .collect(Collectors.toList());
+        return new CartDto(cart.getTotalPrice(), items);
     }
 
-    public Cart save(CartDto cartDto) {
-        Users user = usersRepository.findById(cartDto.getUserId())
+    public Cart save(Long userId) {
+        Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = mapper.toCart(cartDto, user);
+        Cart cart = new Cart();
+        cart.setUser(user);
         cart.setTotalPrice(BigDecimal.ZERO);
-        try {
-            return cartRepository.save(cart);
-        } catch (Exception e) {
-            throw new ObjectSaveException("Error saving brand");
-        }
+//                mapper.toCart(cartDto, user);
+//        cart.setTotalPrice(BigDecimal.ZERO);
+        return cartRepository.save(cart);
     }
 
 //    public Cart update(CartDto newCart, Long id) {
@@ -82,8 +85,8 @@ public class CartService {
 //    }
 
     @Transactional
-    public Orders createOrderFromCart(Long userId) {
-        try {
+    public Orders createOrderFromCart() {
+        Long userId= jwtProvider.getCurrentUserId();
             Users user = usersRepository.findById(userId)
                     .orElseThrow(() -> new ObjectNotFoundException("User not found with id: " + userId));
 
@@ -117,12 +120,9 @@ public class CartService {
 
             orderItemRepository.saveAll(orderItems);
 
-            clearCart(cart.getCartId());
+            clearCart();
 
             return savedOrder;
-        } catch (Exception e) {
-            throw new ObjectSaveException("Failed to create order: " + e.getMessage());
-        }
     }
 
     private BigDecimal calculateTotalPrice(Cart cart) {
@@ -140,9 +140,10 @@ public class CartService {
     }
 
     @Transactional
-    public void clearCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));
+    public void clearCart() {
+        Long userId = jwtProvider.getCurrentUserId();
+        Cart cart = cartRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Cart not found for user id: " + userId));
 
         cartItemRepository.deleteAll(cart.getCartItems());
         cart.getCartItems().clear();

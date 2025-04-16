@@ -7,13 +7,11 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderItemDto {
+public class PasswordDto {
 
-    @NotNull(message = "Order id can't be null")
-    Long orderId;
+    @NotNull(message = "Password can't be null")
+    String oldPass;
 
-    @NotNull(message = "Product id can't be null")
-    Long productId;
-
-    Long quantity;
+    @NotNull(message = "Password can't be null")
+    String newPass;
 }

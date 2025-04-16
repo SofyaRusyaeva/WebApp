@@ -24,7 +24,6 @@ import java.util.List;
 public class OrdersController {
 
     OrdersService ordersService;
-    JwtProvider jwtProvider;
 
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -43,8 +42,7 @@ public class OrdersController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
     public ResponseEntity<List<Orders>> getUserOrders() {
-        Long userId = jwtProvider.getCurrentUserId();
-        return ResponseEntity.ok(ordersService.findByUserId(userId));
+        return ResponseEntity.ok(ordersService.findByUserId());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -56,8 +54,7 @@ public class OrdersController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me/{orderId}")
     public ResponseEntity<List<ItemResponseDto>> getMyOrderItems(@PathVariable Long orderId) {
-        Long userId = jwtProvider.getCurrentUserId();
-        return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(userId, orderId));
+        return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(orderId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

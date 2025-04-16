@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import io.jsonwebtoken.security.Keys;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,18 +15,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtProvider {
-    @Value("${jwt.secret}")
-    private String secret;
 
-    @Value("${jwt.accessExpiration}")
-    private long accessExpiration;
-    @Value("${jwt.refreshExpiration}")
-    private long refreshExpiration;
+    @Value("${jwt.secret}")
+    String secret;
+
+    @Value("${jwt.access-expiration}")
+    long accessExpiration;
+
+    @Value("${jwt.refresh-expiration}")
+    long refreshExpiration;
 
     public String generateAccessToken(UserDetails userDetails, Long userId) {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
@@ -60,7 +66,7 @@ public class JwtProvider {
                 .getSubject();
     }
 
-//    public boolean validateToken(String token, UserDetails userDetails) {
+    //    public boolean validateToken(String token, UserDetails userDetails) {
 //        String username = extractUsername(token);
 //        return username.equals(userDetails.getUsername());
 //    }
@@ -95,5 +101,10 @@ public class JwtProvider {
             throw new RuntimeException("No token found");
         }
         return extractUserId(token);
+    }
+
+    public Instant extractExpiration(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.getExpiration().toInstant();
     }
 }

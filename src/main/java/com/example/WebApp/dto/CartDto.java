@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -16,6 +17,8 @@ public class CartDto {
     //@NotNull(message = "Total price can't be null")
     BigDecimal totalPrice;
 
-    @NotNull(message = "User id can't be null")
-    Long userId;
+    List<ItemResponseDto> cartItems;
+
+//    @NotNull(message = "User id can't be null")
+//    Long userId;
 }

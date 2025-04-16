@@ -1,22 +1,19 @@
 package com.example.WebApp.service;
 
-import com.example.WebApp.dto.CartDto;
+import com.example.WebApp.config.JwtProvider;
+import com.example.WebApp.dto.PasswordDto;
+import com.example.WebApp.dto.UserUpdateDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.exeption.DuplicateException;
 import com.example.WebApp.exeption.ObjectNotFoundException;
-import com.example.WebApp.exeption.ObjectSaveException;
-import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.Users;
-import com.example.WebApp.repository.CartRepository;
 import com.example.WebApp.repository.UsersRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -24,10 +21,10 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UsersService {
 
-    CartService cartService;
     UsersRepository usersRepository;
-    Mapper mapper;
     PasswordEncoder passwordEncoder;
+    JwtProvider jwtProvider;
+
 
     public List<Users> findAll() { return usersRepository.findAll(); }
 
@@ -49,16 +46,34 @@ public class UsersService {
         usersRepository.deleteById(userId);
     }
 
-    public Users update(UsersDto newUser, Long id) {
-        Users oldUser = usersRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    public void update(UserUpdateDto newUser) {
+        Long userId = jwtProvider.getCurrentUserId();
+        Users oldUser = usersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if (newUser.getUserName() == null && newUser.getPhone() == null && newUser.getEmail() == null)
+            throw new IllegalArgumentException("Not valid");
 
-        oldUser.setUserName(newUser.getUserName());
-        oldUser.setEmail(newUser.getEmail());
-        oldUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //passwordEncoder.encode(
-        oldUser.setPhone(newUser.getPhone());
+        if (newUser.getUserName() != null)
+            oldUser.setUserName(newUser.getUserName());
 
-        return usersRepository.save(oldUser);
+        if (newUser.getPhone() != null)
+            oldUser.setPhone(newUser.getPhone());
+
+        if (newUser.getEmail() != null) {
+            if (usersRepository.findByEmail(newUser.getEmail()).isPresent())
+                throw new DuplicateException(String.format("email %s already exists", newUser.getEmail()));
+            oldUser.setEmail(newUser.getEmail());
+        }
+        usersRepository.save(oldUser);
+    }
+
+
+    public void updatePassword(PasswordDto passwordDto) {
+        Users user = usersRepository.findById(jwtProvider.getCurrentUserId())
+                .orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        if(user.getPassword().equals(passwordEncoder.encode(passwordDto.getOldPass())))
+            user.setPassword(passwordEncoder.encode(passwordDto.getNewPass()));
+        usersRepository.save(user);
     }
 
     public Users findById(Long userId) {

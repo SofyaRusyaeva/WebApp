@@ -1,9 +1,9 @@
 package com.example.WebApp.service;
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.ProductDto;
 import com.example.WebApp.dto.ProductResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
-import com.example.WebApp.exeption.ObjectSaveException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.*;
 import com.example.WebApp.repository.BrandRepository;
@@ -31,6 +31,7 @@ public class ProductService {
     CartRepository cartRepository;
     CartItemRepository cartItemRepository;
     Mapper mapper;
+    JwtProvider jwtProvider;
 
     public List<ProductResponseDto> sortAndFilter(
             String sortBy, String sortDirection,
@@ -76,11 +77,7 @@ public class ProductService {
         Brand brand = brandRepository.findById(productDto.getBrandId())
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productDto.getBrandId())));
         Product product = mapper.toProduct(productDto, brand);
-        try {
-            return productRepository.save(product);
-        } catch (Exception e) {
-            throw new ObjectSaveException("Error saving brand");
-        }
+        return productRepository.save(product);
     }
 
     public void delete(Long productId) {
@@ -138,15 +135,17 @@ public class ProductService {
     }
 
     public CartItem addProductToCart(Long productId) {
-        Long userId = 1L; // ИЗ ТЕКУЩЕЙ СЕССИИ
+        Long userId = jwtProvider.getCurrentUserId();
         Cart cart = cartRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found with id: " + userId));
         List<CartItem> item = cartItemRepository.findByCart_CartIdAndProduct_ProductId(cart.getCartId(), productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+        cart.setTotalPrice(cart.getTotalPrice().add(product.getPrice()));
         if (item.isEmpty()) {
             CartItem cartItem = new CartItem();
             cartItem.setQuantity(1L);
-            cartItem.setProduct(productRepository.findById(productId)
-                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId)));
+            cartItem.setProduct(product);
             cartItem.setCart(cart);
             return cartItemRepository.save(cartItem);
         } else {

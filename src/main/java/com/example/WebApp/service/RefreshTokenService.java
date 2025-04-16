@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,15 +26,11 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RefreshTokenService {
     final RefreshTokenRepository refreshTokenRepository;
     final JwtProvider jwtProvider;
     final CustomUserDetailsService userDetailsService;
-
-    @Value("${jwt.refreshExpiration}")
-    long refreshTokenDurationMs;
-
 
     @Transactional
     public JwtResponseDto refresh(RefreshTokenDto refreshTokenDto) {
@@ -64,5 +61,10 @@ public class RefreshTokenService {
 
     public void delete (RefreshToken token){
         refreshTokenRepository.delete(token);
+    }
+
+    @Scheduled(fixedRate = 86400000)
+    public void cleanupExpiredTokens() {
+        refreshTokenRepository.deleteByExpiryDateBefore(Instant.now());
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/shop/product")
+@RequestMapping("/api/shop/products")
 public class ProductController {
 
     ProductService productService;

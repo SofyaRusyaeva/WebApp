@@ -67,4 +67,10 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     user_id INT NOT NULL,
     expiry_date TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-)
+);
+
+CREATE TABLE IF NOT EXISTS black_list (
+    token_id SERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    expiry_date TIMESTAMP NOT NULL
+);

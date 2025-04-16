@@ -1,6 +1,8 @@
 package com.example.WebApp.controller;
 
 import com.example.WebApp.config.JwtProvider;
+import com.example.WebApp.dto.PasswordDto;
+import com.example.WebApp.dto.UserUpdateDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.model.Users;
 import com.example.WebApp.service.UsersService;
@@ -43,15 +45,18 @@ public class UsersController {
         return ResponseEntity.ok(usersService.findById(userId));
     }
 
-//    @PostMapping()
-//    public ResponseEntity<Users> addUsers(@Valid @RequestBody UsersDto users) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(usersService.save(users));
-//    }
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/me/edit")
+    public ResponseEntity<Users> updateUsers(@RequestBody UserUpdateDto users) {
+        usersService.update(users);
+        return ResponseEntity.ok().build();
+    }
 
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{userId}")
-    public ResponseEntity<Users> updateUsers(@Valid @RequestBody UsersDto users, @PathVariable Long userId) {
-        return ResponseEntity.ok(usersService.update(users, userId));
+    @PatchMapping("/me/edit/password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordDto passwordDto) {
+        usersService.updatePassword(passwordDto);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('USER')")

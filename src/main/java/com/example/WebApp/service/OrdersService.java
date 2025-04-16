@@ -1,5 +1,6 @@
 package com.example.WebApp.service;
 
+import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.mapper.Mapper;
@@ -25,6 +26,8 @@ public class OrdersService {
     OrdersRepository ordersRepository;
     OrderItemRepository orderItemRepository;
     Mapper mapper;
+    JwtProvider jwtProvider;
+
 
 //    public List<Orders> findAll() {
 //        return ordersRepository.findAll();
@@ -57,7 +60,8 @@ public class OrdersService {
         return ordersRepository.findAll();
     }
 
-    public List<Orders> findByUserId (Long userId){
+    public List<Orders> findByUserId (){
+        Long userId = jwtProvider.getCurrentUserId();
         return ordersRepository.findByUser_UserId(userId);
     }
 
@@ -67,7 +71,8 @@ public class OrdersService {
                 .collect(Collectors.toList());
     }
 
-    public List<ItemResponseDto> findByOrderIdAndUserId(Long userId, Long orderId) {
+    public List<ItemResponseDto> findByOrderIdAndUserId(Long orderId) {
+        Long userId = jwtProvider.getCurrentUserId();
         return orderItemRepository.findByOrder_OrderIdAndOrder_User_UserId(orderId, userId)
                 .stream()
                 .map(mapper::toOrderItemResponse)
