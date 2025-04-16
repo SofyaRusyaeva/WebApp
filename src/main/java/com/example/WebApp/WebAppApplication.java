@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 // TODO: Проверка валидности токена
 // TODO: Перепроверить логику
-// TODO: updateProduct
 
 
 @SpringBootApplication

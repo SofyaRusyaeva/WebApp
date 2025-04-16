@@ -38,6 +38,7 @@ public class AuthService {
     JwtProvider jwtProvider;
     AuthenticationManager authenticationManager;
     RefreshTokenRepository refreshTokenRepository;
+    CartService cartService;
 
     @Value("${jwt.refresh-expiration}")
     @NonFinal
@@ -49,7 +50,9 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (usersRepository.findByEmail(userDto.getEmail()).isPresent())
             throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
-        return usersRepository.save(user);
+        Users newUser = usersRepository.save(user);
+        cartService.save(user.getUserId());
+        return newUser;
     }
 
     public JwtResponseDto authenticate(AuthDto authDto) {

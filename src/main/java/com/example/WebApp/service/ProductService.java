@@ -3,6 +3,7 @@ package com.example.WebApp.service;
 import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.ProductDto;
 import com.example.WebApp.dto.ProductResponseDto;
+import com.example.WebApp.dto.ProductUpdateDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.*;
@@ -84,23 +85,41 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public Product update(ProductDto newProduct, Long id) {
+    //ТУТ Я НЕ РЕШИЛА, КАК ЛУЧШЕ: ВОЗВРАЩАТЬ VOID ИЛИ PRODUCT, ОСТАВИЛА PRODUCT
+    public Product update(ProductUpdateDto newProduct, Long id) {
         Product oldProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", id)));
 
-        Brand brand = brandRepository.findById(newProduct.getBrandId())
-                .orElseThrow(() -> new RuntimeException("Brand not found with id: " + newProduct.getBrandId()));
-
-        oldProduct.setName(newProduct.getName());
-        if (!Objects.equals(oldProduct.getPrice(), newProduct.getPrice()))
-            updateProductPrice(id, newProduct.getPrice(), oldProduct.getPrice());
-        oldProduct.setPrice(newProduct.getPrice());
-        oldProduct.setBrand(brand);
-        oldProduct.setDescription(newProduct.getDescription());
-        oldProduct.setCategory(newProduct.getCategory());
+        if (newProduct.getName() != null)
+            oldProduct.setName(newProduct.getName());
+        if (newProduct.getPrice() != null)
+            if (!Objects.equals(oldProduct.getPrice(), newProduct.getPrice())) {
+                updateProductPrice(id, newProduct.getPrice(), oldProduct.getPrice());
+                oldProduct.setPrice(newProduct.getPrice());
+            }
+        if (newProduct.getDescription() != null)
+            oldProduct.setDescription(newProduct.getDescription());
 
         return productRepository.save(oldProduct);
     }
+
+//    public Product update(ProductDto newProduct, Long id) {
+//        Product oldProduct = productRepository.findById(id)
+//                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", id)));
+//
+//        Brand brand = brandRepository.findById(newProduct.getBrandId())
+//                .orElseThrow(() -> new RuntimeException("Brand not found with id: " + newProduct.getBrandId()));
+//
+//        oldProduct.setName(newProduct.getName());
+//        if (!Objects.equals(oldProduct.getPrice(), newProduct.getPrice()))
+//            updateProductPrice(id, newProduct.getPrice(), oldProduct.getPrice());
+//        oldProduct.setPrice(newProduct.getPrice());
+//        oldProduct.setBrand(brand);
+//        oldProduct.setDescription(newProduct.getDescription());
+//        oldProduct.setCategory(newProduct.getCategory());
+//
+//        return productRepository.save(oldProduct);
+//    }
 
 //    public List<Product> findAllSorted(String sortBy, String sortDirection) {
 //        if ("desc".equalsIgnoreCase(sortDirection) && "name".equalsIgnoreCase(sortBy)) {

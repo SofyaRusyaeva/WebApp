@@ -95,16 +95,16 @@ public class JwtProvider {
         return claims.get("userId", Long.class);
     }
 
+    public Instant extractExpiration(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.getExpiration().toInstant();
+    }
+
     public Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !(auth.getCredentials() instanceof String token)) {
             throw new RuntimeException("No token found");
         }
         return extractUserId(token);
-    }
-
-    public Instant extractExpiration(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.getExpiration().toInstant();
     }
 }

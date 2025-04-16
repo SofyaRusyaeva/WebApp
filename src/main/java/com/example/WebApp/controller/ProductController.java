@@ -2,6 +2,7 @@ package com.example.WebApp.controller;
 
 import com.example.WebApp.dto.ProductDto;
 import com.example.WebApp.dto.ProductResponseDto;
+import com.example.WebApp.dto.ProductUpdateDto;
 import com.example.WebApp.model.CartItem;
 import com.example.WebApp.model.Product;
 import com.example.WebApp.model.ProductCategory;
@@ -63,8 +64,8 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductDto product, @PathVariable Long productId) {
-        return ResponseEntity.ok(productService.update(product, productId));
+    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductUpdateDto updateDto, @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.update(updateDto, productId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
