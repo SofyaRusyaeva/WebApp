@@ -85,7 +85,6 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    //ТУТ Я НЕ РЕШИЛА, КАК ЛУЧШЕ: ВОЗВРАЩАТЬ VOID ИЛИ PRODUCT, ОСТАВИЛА PRODUCT
     public Product update(ProductUpdateDto newProduct, Long id) {
         Product oldProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", id)));

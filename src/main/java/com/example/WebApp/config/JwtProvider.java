@@ -66,10 +66,6 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    //    public boolean validateToken(String token, UserDetails userDetails) {
-//        String username = extractUsername(token);
-//        return username.equals(userDetails.getUsername());
-//    }
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()

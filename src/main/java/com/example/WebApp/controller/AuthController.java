@@ -36,8 +36,10 @@ public class AuthController {
     JwtProvider jwtProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UsersDto userDto) {
-        return ResponseEntity.ok(authService.save(userDto));
+    public ResponseEntity<JwtResponseDto> register(@RequestBody UsersDto userDto) {
+        authService.save(userDto);
+        AuthDto authDto = new AuthDto(userDto.getEmail(), userDto.getPassword());
+        return ResponseEntity.ok(authService.authenticate(authDto));
     }
 
     @PostMapping("/login")
@@ -56,7 +58,7 @@ public class AuthController {
                 .ifPresent(refreshTokenService::delete);
         String accessToken = authHeader.substring(7);
         blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Successful!");
     }
 
 

@@ -43,13 +43,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    CorsConfiguration config = new CorsConfiguration();
-//                    config.setAllowedOrigins(List.of("*"));
-//                    config.setAllowedMethods(List.of("*"));
-//                    config.setAllowedHeaders(List.of("*"));
-//                    return config;
-//                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
@@ -86,42 +79,3 @@ public class SecurityConfig {
         return provider;
     }
 }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests((requests) -> requests
-//                        .requestMatchers("/", "/home").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin((form) -> form
-//                        .loginPage("/login")
-//                        .permitAll()
-//                )
-//                .logout((logout) -> logout.permitAll());
-//        return http.build();
-//    }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .anyRequest().authenticated())
-////                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-////                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
-
-//    @Bean
-//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-//                UserDetails user = User.builder()
-//                .username("1")
-//                .password(passwordEncoder.encode("1"))
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }

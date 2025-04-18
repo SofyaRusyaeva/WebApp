@@ -1,5 +1,5 @@
-INSERT INTO users (user_name, email, password, phone) VALUES ('Ann', 'ann@gmail.com', '123', '1234567890');
-INSERT INTO users (user_name, email, password, phone) VALUES ('Milana', 'milana@gmail.com', '456', '0987654321');
+INSERT INTO users (user_name, email, password, phone) VALUES ('Ann', 'ann@gmail.com', '$2a$10$9teQIvuui0beXwbF/471he21dNZWXBvDLtJtTpF4QRQITWW2LWQAG', '1234567890');
+INSERT INTO users (user_name, email, password, phone) VALUES ('Milana', 'milana@gmail.com', '$2a$10$/5XG65.Q2XiBt7NgJxMuV.4KQ.uANMtWzpifAcKJf0Wuq8RuZZhJG', '0987654321');
 
 INSERT INTO brand (name, country) VALUES ('Clinique', 'France');
 INSERT INTO brand (name, country) VALUES ('Loreal', 'France');

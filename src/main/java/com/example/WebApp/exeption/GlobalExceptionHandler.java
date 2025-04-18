@@ -3,7 +3,9 @@ package com.example.WebApp.exeption;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler({NoHandlerFoundException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({NoHandlerFoundException.class, MethodArgumentTypeMismatchException.class, HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<Map<String, Object>> handleNoHandlerFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
@@ -88,6 +90,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessException.class)
     public ResponseEntity<Map<String, Object>> handleAccessException(AccessException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                Map.of(
+                        "status", HttpStatus.FORBIDDEN.value(),
+                        "message", "You can't view this page"
+                )
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessException(AccessDeniedException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                         "status", HttpStatus.FORBIDDEN.value(),
