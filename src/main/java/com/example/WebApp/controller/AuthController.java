@@ -54,8 +54,10 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
-        refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
-                .ifPresent(refreshTokenService::delete);
+        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
+                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
+        refreshTokenService.delete(token);
+
         String accessToken = authHeader.substring(7);
         blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
         return ResponseEntity.ok("Successful!");
