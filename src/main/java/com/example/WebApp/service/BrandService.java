@@ -27,7 +27,7 @@ public class BrandService {
 
     public Brand save(BrandDto brandDto) {
         if (brandRepository.findByName(brandDto.getName()).isPresent())
-            throw new DuplicateException(String.format("Brand %s already exists", brandDto.getName()));
+            throw new DuplicateException(String.format("Brand %s already exists", brandDto.getName()), "brand-form");
         return brandRepository.save(mapper.toBrand(brandDto));
     }
 

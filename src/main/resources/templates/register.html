@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-<head>
-  <title>Registration</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Register</title></head>
 <body>
-<h2>Registration</h2>
-<div th:if="${param.error}">
-  Registration failed. Please try again.
+<h2>Register</h2>
+
+<div th:if="${error}" style="color:red;">
+    <p th:text="${error}"></p>
 </div>
+
 <form th:action="@{/api/auth/register}" method="post">
-  <div><label> User Name : <input type="text" name="username"/> </label></div>
-  <div><label> Password: <input type="password" name="password"/> </label></div>
-  <div><label> Confirm Password: <input type="password" name="confirmPassword"/> </label></div>
-  <div><input type="submit" value="Register"/></div>
+    <label>Email*: <input type="text" name="email"/></label><br/>
+    <label>Password*: <input type="password" name="password"/></label><br/>
+    <label>Username: <input type="text" name="username"/></label><br/>
+    <label>Phone: <input type="text" name="phone"/></label><br/>
+    <button type="submit">Register</button>
 </form>
+
 </body>
 </html>

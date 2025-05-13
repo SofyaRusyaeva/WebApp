@@ -4,6 +4,7 @@ import com.example.WebApp.model.Product;
 import com.example.WebApp.model.ProductCategory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,4 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByPriceBetweenAndBrand_NameIn(BigDecimal minPrice, BigDecimal maxPrice, List<String> brandNames, Sort sort);
 
     List<Product> findByCategoryInAndPriceBetweenAndBrand_NameIn(List<ProductCategory> categories, BigDecimal minPrice, BigDecimal maxPrice, List<String> brandNames, Sort sort);
+
+//    List<Product> findAll(Sort sort);
 }

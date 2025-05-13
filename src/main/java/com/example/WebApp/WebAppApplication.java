@@ -5,8 +5,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-// TODO: Проверка валидности токена
-// TODO: Перепроверить логику
+// TODO: Корзина
+// TODO: Заказы
+// TODO: Страница пользователя
+
+// TODO: Шапка меню со всеми страницами и на ней кнопка logout
+
+// TODO: Автоматически обновлять токен при протухании
+
+// TODO: Форма для создания бренда (на странице с товарами)
+// TODO: Выбор бренда из списка при создании товара (опционально)
+
 
 
 @SpringBootApplication

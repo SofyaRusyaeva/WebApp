@@ -61,7 +61,7 @@ public class UsersService {
 
         if (newUser.getEmail() != null) {
             if (usersRepository.findByEmail(newUser.getEmail()).isPresent())
-                throw new DuplicateException(String.format("email %s already exists", newUser.getEmail()));
+                throw new DuplicateException(String.format("email %s already exists", newUser.getEmail()), "edit");
             oldUser.setEmail(newUser.getEmail());
         }
         usersRepository.save(oldUser);

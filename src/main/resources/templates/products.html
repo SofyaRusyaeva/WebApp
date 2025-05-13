@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product List</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Product Catalog</h1>
+
+<!-- Форма фильтрации и сортировки -->
+<form method="get" action="#" th:action="@{products}" id="filter-form">
+    <label for="sortBy">Sort by:</label>
+    <select name="sortBy" id="sortBy">
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+    </select>
+
+    <label for="sortDirection">Сортировка по:</label>
+    <select name="sortDirection" id="sortDirection">
+        <option value="asc">Возрастанию</option>
+        <option value="desc">Убыванию</option>
+    </select>
+
+    <label for="categories">Категория:</label>
+    <select name="categories" id="categories" multiple>
+        <option th:each="category : ${categories}"
+                th:value="${category}"
+                th:text="${category}">
+        </option>
+    </select>
+
+    <label for="brandNames">Бренд:</label>
+    <select name="brandNames" id="brandNames" multiple>
+        <option th:each="brandName : ${brandNames}"
+                th:value="${brandName}"
+                th:text="${brandName}">
+        </option>
+    </select>
+
+    <label for="minPrice">Min Price:</label>
+    <input type="number" step="0.01" name="minPrice" id="minPrice">
+
+    <label for="maxPrice">Max Price:</label>
+    <input type="number" step="0.01" name="maxPrice" id="maxPrice">
+
+    <button type="submit">Apply</button>
+</form>
+
+<hr>
+
+<!-- Кнопка создания нового товара (только для админа) -->
+<div th:if="${isAdmin}">
+    <button type="button" onclick="toggleCreateForm()">Добавить новый товар</button>
+
+    <!-- Форма создания товара -->
+    <div class="create-form" id="create-form">
+        <h3>Создание нового товара</h3>
+        <form id="create-product-form">
+            <label for="new-name">Название:</label>
+            <input type="text" id="new-name" name="name" required>
+
+            <label for="new-description">Описание:</label>
+            <textarea id="new-description" name="description" required></textarea>
+
+            <label for="new-category">Категория:</label>
+            <select id="new-category" name="category" required>
+                <option th:each="category : ${T(com.example.WebApp.model.ProductCategory).values()}"
+                        th:value="${category}"
+                        th:text="${category}">
+                </option>
+            </select>
+
+            <label for="new-price">Цена:</label>
+            <input type="number" step="0.01" id="new-price" name="price" required>
+
+            <label for="new-brandName">Название бренда:</label>
+            <input type="text" id="new-brandName" name="brandName" required>
+
+<!--            <label for="brandNamesList">Бренд:</label>-->
+<!--            <select name="brandNamesList" id="brandNamesList" multiple>-->
+<!--                <option th:each="brandName : ${brandNamesList}"-->
+<!--                        th:value="${brandName}"-->
+<!--                        th:text="${brandName}">-->
+<!--                </option>-->
+<!--            </select>-->
+
+            <button type="button" onclick="createProduct()">Создать товар</button>
+            <button type="button" onclick="toggleCreateForm()">Отмена</button>
+        </form>
+    </div>
+<!---->
+
+<div class="product-grid">
+    <div class="product-card" th:each="product : ${products}">
+        <h2 th:text="${product.name}">Product Name</h2>
+        <p><strong>Category:</strong> <span th:text="${product.category}">Category</span></p>
+        <p><strong>Description:</strong> <span th:text="${product.description}">Description</span></p>
+        <p><strong>Бренд:</strong> <span th:text="${product.brandName}">Бренд</span></p>
+        <p><strong>Price:</strong> <span th:text="${product.price}">0.00</span> ₽</p>
+
+        <button type="button"
+                th:if="${not isAdmin}"
+                th:attr="onclick=${'addToCart(' + product.id + ')'}">
+            Добавить в корзину
+        </button>
+
+        <button type="button"
+                th:if="${isAdmin}"
+                th:attr="onclick=${'deleteProduct(' + product.id + ')'}">
+            Удалить товар
+        </button>
+
+        <button type="button"
+                th:if="${isAdmin}"
+                th:onclick="'toggleEditForm(' + ${product.id} + ')'">
+            Редактировать товар
+        </button>
+
+        <div class="edit-form" th:id="'edit-form-' + ${product.id}" style="display: none;">
+            <h3>Редактирование товара</h3>
+            <form th:id="'edit-product-form-' + ${product.id}">
+                <input type="hidden" name="productId" th:value="${product.id}">
+
+                <label for="name">Название:</label>
+                <input type="text" id="name" name="name" th:value="${product.name}" required>
+
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" required th:text="${product.description}"></textarea>
+
+                <label for="price">Цена:</label>
+                <input type="number" step="0.01" id="price" name="price" th:value="${product.price}" required>
+
+                <button type="button" th:onclick="'saveProduct(' + ${product.id} + ')'">Сохранить</button>
+                <button type="button" th:onclick="'toggleEditForm(' + ${product.id} + ')'">Отмена</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script>
+    function addToCart(productId) {
+      fetch('/api/shop/products/' + productId, {
+        method: 'POST',
+        credentials: 'same-origin'
+      })
+      .then(async response => {
+        if (response.ok) {
+          alert('Товар успешно добавлен в корзину!');
+        } else {
+          const err = await response.json().catch(() => ({}));
+          alert('Ошибка: ' + (err.message || response.status));
+        }
+      })
+      .catch(e => {
+        console.error(e);
+        alert('Произошла сетевая ошибка');
+      });
+    }
+
+    function deleteProduct(productId) {
+      if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+            fetch('/api/shop/products/' + productId, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              alert('Товар удален!');
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+      }
+    }
+
+     function toggleEditForm(productId) {
+        const form = document.getElementById('edit-form-' + productId);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+function saveProduct(productId) {
+    const form = document.getElementById('edit-product-form-' + productId);
+
+    const params = new URLSearchParams();
+    params.append('name', form.name.value);
+    params.append('description', form.description.value);
+    params.append('price', form.price.value);
+
+    fetch(`/api/shop/products/${productId}?${params.toString()}`, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(async response => {
+        if (response.ok) {
+            alert('Товар успешно изменен!');
+            location.reload();
+        } else {
+            const err = await response.json().catch(() => ({}));
+            alert('Ошибка: ' + (err.message || response.status));
+        }
+    })
+    .catch(e => {
+        console.error(e);
+        alert('Произошла сетевая ошибка');
+    });
+}
+
+function toggleCreateForm() {
+        const form = document.getElementById('create-form');
+        form.style.display = form.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function createProduct() {
+        const form = document.getElementById('create-product-form');
+        const formData = new FormData(form);
+
+        const productData = {
+            name: formData.get('name'),
+            description: formData.get('description'),
+            category: formData.get('category'),
+            price: parseFloat(formData.get('price')),
+            brandName: formData.get('brandName')
+       };
+
+
+        fetch('/api/shop/products', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(productData)
+        })
+        .then(async response => {
+            if (response.ok) {
+                alert('Товар успешно создан!');
+                location.reload();
+            } else if (response.status === 401) {
+                alert('Сессия истекла. Пожалуйста, войдите снова.');
+                window.location.href = '/login';
+            } else {
+                const err = await response.json().catch(() => ({}));
+                alert('Ошибка: ' + (err.message || response.status));
+            }
+        })
+        .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+        });
+    }
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+<!--function saveProduct(productId) {-->
+<!--const form = document.getElementById('edit-product-form-' + productId);-->
+<!--const formData = new FormData(form);-->
+
+<!--const productData = {-->
+<!--name: formData.get('name'),-->
+<!--description: formData.get('description'),-->
+<!--price: parseFloat(formData.get('price'))-->
+<!--};-->
+
+<!--fetch('/api/shop/products/' + productId, {-->
+<!--method: 'PUT',-->
+<!--credentials: 'same-origin',-->
+<!--body: JSON.stringify(productData)-->
+<!--})-->
+<!--.then(async response => {-->
+<!--if (response.ok) {-->
+<!--alert('Товар успешно изменен!');-->
+<!--location.reload(); // Перезагружаем страницу-->
+<!--} else {-->
+<!--const err = await response.json().catch(() => ({}));-->
+<!--alert('Ошибка: ' + (err.message || response.status));-->
+<!--}-->
+<!--})-->
+<!--.catch(e => {-->
+<!--console.error(e);-->
+<!--alert('Произошла сетевая ошибка');-->
+<!--});-->
+<!--}-->

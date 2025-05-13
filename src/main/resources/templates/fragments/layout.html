@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:replace="${pageTitle}">My Web App</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/shop">Shop</a>
+    <a href="/login" th:if="${#httpServletRequest.remoteUser == null}">Login</a>
+    <a href="/logout" th:if="${#httpServletRequest.remoteUser != null}">Logout</a>
+  </nav>
+</header>
+
+<main>
+  <div th:insert="${content}">Main content</div>
+</main>
+
+<footer>
+  <p>&copy; 2025 My Web App</p>
+</footer>
+</body>
+</html>

@@ -7,18 +7,16 @@ import com.example.WebApp.dto.RefreshTokenDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.model.RefreshToken;
-import com.example.WebApp.model.Users;
 import com.example.WebApp.service.AuthService;
 import com.example.WebApp.service.BlackListService;
-import com.example.WebApp.service.CustomUserDetailsService;
 import com.example.WebApp.service.RefreshTokenService;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,17 +33,50 @@ public class AuthController {
 
     JwtProvider jwtProvider;
 
+//    @PostMapping("/register")
+//    public ResponseEntity<JwtResponseDto> register(@RequestBody UsersDto userDto) {
+//        authService.save(userDto);
+//        AuthDto authDto = new AuthDto(userDto.getEmail(), userDto.getPassword());
+//        return ResponseEntity.ok(authService.authenticate(authDto));
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<JwtResponseDto> register(@RequestBody UsersDto userDto) {
+    public String register(
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String username,
+            @RequestParam String phone,
+            HttpServletResponse response
+    ) {
+        UsersDto userDto = new UsersDto(username, email, password, phone);
         authService.save(userDto);
-        AuthDto authDto = new AuthDto(userDto.getEmail(), userDto.getPassword());
-        return ResponseEntity.ok(authService.authenticate(authDto));
+        JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+        Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<String > login(@RequestBody AuthDto authDto) {
+//        return ResponseEntity.ok(authService.authenticate(authDto).getAccessToken());
+//    }
+
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDto> login(@RequestBody AuthDto authDto) {
-        return ResponseEntity.ok(authService.authenticate(authDto));
+    public String loginFromForm(
+            @RequestParam String email,
+            @RequestParam String password,
+            HttpServletResponse response
+    ) {
+        JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+        Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<JwtResponseDto> refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {

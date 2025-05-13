@@ -15,6 +15,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -59,7 +62,7 @@ public class ProductService {
             products = productRepository.findByCategoryIn(categories, sort);
         else if (minPrice != null && maxPrice != null)
             products = productRepository.findByPriceBetween(minPrice, maxPrice, sort);
-        else products = productRepository.findAll();
+        else products = productRepository.findAll(sort);
         return products.stream()
                 .map(mapper::toProductResponse)
                 .collect(Collectors.toList());
@@ -75,8 +78,11 @@ public class ProductService {
     }
 
     public Product save(ProductDto productDto) {
-        Brand brand = brandRepository.findById(productDto.getBrandId())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productDto.getBrandId())));
+        Brand brand = brandRepository.findByName(productDto.getBrandName())
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Brand %s not found", productDto.getBrandName())));
+
+//        Brand brand = brandRepository.findById(productDto.getBrandId())
+//                .orElseThrow(() -> new ObjectNotFoundException(String.format("Product %s not found", productDto.getBrandId())));
         Product product = mapper.toProduct(productDto, brand);
         return productRepository.save(product);
     }
@@ -154,6 +160,8 @@ public class ProductService {
 
     public CartItem addProductToCart(Long productId) {
         Long userId = jwtProvider.getCurrentUserId();
+
+
         Cart cart = cartRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found with id: " + userId));
         List<CartItem> item = cartItemRepository.findByCart_CartIdAndProduct_ProductId(cart.getCartId(), productId);

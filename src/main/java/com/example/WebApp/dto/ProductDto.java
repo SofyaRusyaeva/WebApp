@@ -28,6 +28,6 @@ public class ProductDto {
     @Positive(message = "Price must be positive")
     BigDecimal price;
 
-    @NotNull(message = "Brand id can't be null")
-    Long brandId;
+//    @NotNull(message = "Brand id can't be null")
+    String brandName;
 }

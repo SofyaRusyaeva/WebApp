@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: layout (~{::body}, ~{::title})">-->
 <head>
-  <title>Spring Security Example </title>
+  <meta charset="UTF-8">
+  <title>Login</title>
 </head>
 <body>
-<div th:if="${param.error}">
-  Invalid username and password.
-</div>
-<div th:if="${param.logout}">
-  You have been logged out.
+<h2>Login</h2>
+
+<!--<div th:if="${error}" class="modal">-->
+<!--  <span class="modal-close" onclick="this.parentElement.style.display='none';">&times;</span>-->
+<!--  <p th:text="${error}"></p>-->
+<!--</div>-->
+<div th:if="${error}" style="color:red;">
+  <p th:text="${error}"></p>
 </div>
 <form th:action="@{/api/auth/login}" method="post">
-<!--  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-  <div><label> User Name : <input type="text" name="username"/> </label></div>
-  <div><label> Password: <input type="password" name="password"/> </label></div>
-  <div><input type="submit" value="Sign In"/></div>
+  <label>Email: <input type="text" name="email"/></label><br/>
+  <label>Password: <input type="password" name="password"/></label><br/>
+  <button type="submit">Login</button>
 </form>
+
+<div>
+  <form th:action="@{/api/auth/register}" method="get">
+    <button type="submit">Нет аккаунта?</button>
+  </form>
+</div>
 </body>
 </html>

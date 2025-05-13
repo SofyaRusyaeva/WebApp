@@ -5,6 +5,7 @@ import com.example.WebApp.dto.AuthDto;
 import com.example.WebApp.dto.JwtResponseDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.exeption.DuplicateException;
+import com.example.WebApp.exeption.InvalidValueException;
 import com.example.WebApp.exeption.ObjectNotFoundException;
 import com.example.WebApp.mapper.Mapper;
 import com.example.WebApp.model.RefreshToken;
@@ -26,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,16 +49,32 @@ public class AuthService {
 
     @Transactional
     public Users save(UsersDto userDto) {
+        List<String> missingFields = new ArrayList<>();
+
+        if (userDto.getEmail().isEmpty()) missingFields.add("email");
+        if (userDto.getPassword().isEmpty()) missingFields.add("пароль");
+        if (userDto.getUserName().isEmpty()) missingFields.add("имя пользователя");
+        if (!missingFields.isEmpty())
+            throw new InvalidValueException(
+                    String.format("Поля %s обязательны", String.join(", ", missingFields)), "register");
+
         Users user = mapper.toUsers(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (usersRepository.findByEmail(userDto.getEmail()).isPresent())
-            throw new DuplicateException(String.format("email %s already exists", userDto. getEmail()));
+            throw new DuplicateException(String.format("Email %s уже существует", userDto. getEmail()), "register");
         Users newUser = usersRepository.save(user);
         cartService.save(user.getUserId());
         return newUser;
     }
 
     public JwtResponseDto authenticate(AuthDto authDto) {
+        List<String> missingFields = new ArrayList<>();
+        if (authDto.getEmail().isEmpty()) missingFields.add("email");
+        if (authDto.getPassword().isEmpty()) missingFields.add("пароль");
+        if (!missingFields.isEmpty())
+            throw new InvalidValueException(
+                String.format("Поля %s обязательны", String.join(", ", missingFields)), "login");
+        
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authDto.getEmail(), authDto.getPassword())
         );
