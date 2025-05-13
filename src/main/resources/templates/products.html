@@ -2,10 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Product List</title>
+    <th:block th:insert="~{header :: head}"></th:block>
+
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<th:block th:insert="~{header :: nav}"></th:block>
+
 <h1>Product Catalog</h1>
 
 <form method="get" action="#" th:action="@{products}" id="filter-form">

@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example</title>
+    <title>Главная страница</title>
+    <meta charset="UTF-8">
+    <th:block th:insert="~{header :: head}"></th:block>
 </head>
 <body>
-<h1>Welcome!</h1>
+<th:block th:insert="~{header :: nav}"></th:block>
 
-<p th:if="${username != null}">
-    Hello, <span th:text="${username}"></span>!
-</p>
-
-<ul>
-    <li><a th:href="@{api/shop/products}">Список продуктов</a></li>
-    <li><a th:href="@{api/shop/brands}">Бренды</a></li>
-    <li><a th:href="@{/logout}">Выйти</a></li>
-</ul>
-<p th:if="${username == null}">
-    You are not logged in.
-</p>
+<div class="content">
+    <h1>Добро пожаловать!</h1>
+    <p>Это главная страница нашего приложения.</p>
+</div>
 </body>
 </html>
