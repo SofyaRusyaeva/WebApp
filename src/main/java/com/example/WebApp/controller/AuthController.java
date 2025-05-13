@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -58,11 +59,6 @@ public class AuthController {
         return "redirect:/";
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String > login(@RequestBody AuthDto authDto) {
-//        return ResponseEntity.ok(authService.authenticate(authDto).getAccessToken());
-//    }
-
     @PostMapping("/login")
     public String loginFromForm(
             @RequestParam String email,
@@ -77,31 +73,76 @@ public class AuthController {
         return "redirect:/";
     }
 
-
     @PostMapping("/refresh")
     public ResponseEntity<JwtResponseDto> refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
         return ResponseEntity.ok(refreshTokenService.refresh(refreshTokenDto));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
-        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
-                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
-        refreshTokenService.delete(token);
+//    @PostMapping("/logout")
+//    @ResponseBody
+//    public void logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
+//        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
+//                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
+//        refreshTokenService.delete(token);
+//
+//        String accessToken = authHeader.substring(7);
+//        blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
+////        return ResponseEntity.ok("Successful!");
+//    }
 
-        String accessToken = authHeader.substring(7);
+//    @GetMapping("/logout")
+//    public String logout(
+//            HttpServletResponse response,
+//            @CookieValue(value = "access_token", required = false) String accessToken
+//    ) {
+//        if (accessToken != null) {
+//            // Добавляем токен в черный список
+//            blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
+//
+//            Cookie cookie = new Cookie("access_token", null);
+//            cookie.setPath("/");
+//            cookie.setHttpOnly(true);
+//            cookie.setMaxAge(0);
+//            response.addCookie(cookie);
+//        }
+//
+//        return "redirect:/api/auth/login";
+//    }
+
+@PostMapping(value = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+public String logoutForm(
+        HttpServletResponse response,
+        @CookieValue(value = "access_token", required = false) String accessToken,
+        @RequestParam(value = "_csrf", required = false) String csrfToken
+) {
+    if (accessToken != null) {
         blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
-        return ResponseEntity.ok("Successful!");
+
+        Cookie cookie = new Cookie("access_token", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 
+    return "redirect:/api/auth/login";
+}
 
-//    @GetMapping("/login")
-//    public String loginPage() {
-//        return "login";
-//    }
-//
-//    @GetMapping("/register")
-//    public String registerPage() {
-//        return "register";
-//    }
+    @GetMapping("/logout")
+    public String logout(
+            HttpServletResponse response,
+            @CookieValue(value = "access_token", required = false) String accessToken
+    ) {
+        if (accessToken != null) {
+            blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
+
+            Cookie cookie = new Cookie("access_token", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+
+        return "redirect:/api/auth/login";
+    }
 }
