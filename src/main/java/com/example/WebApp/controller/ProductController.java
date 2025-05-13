@@ -49,12 +49,14 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", List.of(ProductCategory.values()));
 
+//        List<Brand> brands = brandRepository.findAll();
+//
+//        List<String> brandNameList = brands.stream()
+//                .map(Brand::getName)
+//                .collect(Collectors.toList());
+//        model.addAttribute("brandNames", brandNameList);
         List<Brand> brands = brandRepository.findAll();
-
-        List<String> brandNameList = brands.stream()
-                .map(Brand::getName)
-                .collect(Collectors.toList());
-        model.addAttribute("brandNames", brandNameList);
+        model.addAttribute("brands", brands); // Добавляем список всех брендов
 
         boolean isAdmin = false;
         if (authentication != null && authentication.isAuthenticated()) {

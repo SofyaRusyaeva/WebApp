@@ -13,10 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 // TODO: Автоматически обновлять токен при протухании
 
-// TODO: Форма для создания бренда (на странице с товарами)
-// TODO: Выбор бренда из списка при создании товара (опционально)
-
-
+// TODO: Добавить картинки к товарам
 
 @SpringBootApplication
 @EnableScheduling

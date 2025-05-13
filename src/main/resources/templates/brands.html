@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product List</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Brands</h1>
+
+<hr>
+
+<div>
+    <button type="button" onclick="showAddBrandForm()">+ Новый бренд</button>
+    <div id="add-brand-form" style="display: none;">
+        <label for="new-brand-input">Название нового бренда:</label>
+        <input type="text" id="new-brand-input" name="brand-name" required>
+        <label for="new-country">Страна:</label>
+        <select id="new-country" name="brand-country" required>
+            <option value="">Выберите страну</option>
+            <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
+                    th:value="${country}"
+                    th:text="${country}">
+            </option>
+        </select>
+        <button type="button" onclick="addNewBrand()">Добавить</button>
+        <button type="button" onclick="showAddBrandForm()">Отмена</button>
+    </div>
+
+    <!---->
+
+</div>
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Удалить</th>
+            <th>Редактировать</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="brand : ${brands}">
+            <td th:text="${brand.name}">Название</td>
+            <td th:text="${brand.country}">Страна</td>
+            <td>
+                <button type="button"
+                        th:attr="onclick=${'deleteBrand(' + brand.brandId + ')'}">
+                    Удалить
+                </button>
+            </td>
+
+            <td>
+                <button type="button"
+                        th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">
+                    Редактировать
+                </button>
+
+                <div th:id="'edit-brand-form-' + ${brand.brandId}" style="display: none;">
+                    <label>Название:</label>
+                    <input type="text" th:id="'edit-brand-input-' + ${brand.brandId}" th:value="${brand.name}" required>
+                    <label>Страна:</label>
+                    <select th:id="'edit-country-' + ${brand.brandId}" required>
+                        <option value="">Выберите страну</option>
+                        <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
+                                th:value="${country}"
+                                th:selected="${brand.country == country}"
+                                th:text="${country}">
+                        </option>
+                    </select>
+                    <button type="button" th:onclick="'updateBrand(' + ${brand.brandId} + ')'">Сохранить</button>
+                    <button type="button" th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">Отмена</button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function deleteBrand(brandId) {
+      if (confirm('Вы уверены, что хотите удалить этот бренд?')) {
+            fetch('/api/shop/brands/' + brandId, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              alert('Бренд удален!');
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+      }
+    }
+
+
+     function toggleEditForm(brandId) {
+        const form = document.getElementById('edit-brand-form-' + brandId);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+    function updateBrand(brandId) {
+        const newBrandName = document.getElementById('edit-brand-input-' + brandId).value;
+        const newCountry = document.getElementById('edit-country-' + brandId).value;
+
+        if (!newBrandName || !newCountry) {
+            alert('Пожалуйста, заполните все поля');
+            return;
+        }
+
+        const brandData = {
+            brandId: brandId,
+            name: newBrandName,
+            country: newCountry
+        };
+        const params = new URLSearchParams();
+        fetch('/api/shop/brands/' + brandId, {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(brandData)
+        })
+        .then(async response => {
+            if (response.ok) {
+                alert('Бренд обновлен!');
+                location.reload();
+            } else if (response.status === 401) {
+                alert('Сессия истекла. Пожалуйста, войдите снова.');
+                window.location.href = '/login';
+            } else {
+                const err = await response.json().catch(() => ({}));
+                alert('Ошибка: ' + (err.message || response.status));
+            }
+        })
+        .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+        });
+    }
+
+
+    function showAddBrandForm() {
+        const form = document.getElementById('add-brand-form');
+        form.style.display = form.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addNewBrand() {
+        const newBrandName = document.getElementById('new-brand-input').value;
+        const newCountry = document.getElementById('new-country').value;
+
+        if (!newBrandName || !newCountry) {
+            alert('Пожалуйста, заполните все поля');
+            return;
+        }
+
+        const brandData = {
+            name: newBrandName,
+            country: newCountry
+        };
+        fetch('/api/shop/brands', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(brandData)
+      })
+      .then(async response => {
+          if (response.ok) {
+              alert('Бренд успешно добавлен!');
+              location.reload();
+
+              document.getElementById('new-brand-input').value = '';
+              document.getElementById('new-country').value = '';
+              document.getElementById('add-brand-form').style.display = 'none';
+          } else if (response.status === 401) {
+              alert('Сессия истекла. Пожалуйста, войдите снова.');
+              window.location.href = '/login';
+          } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+          }
+      })
+      .catch(e => {
+          console.error(e);
+          alert('Произошла сетевая ошибка');
+      });
+  }
+</script>
+
+
+</body>
+</html>

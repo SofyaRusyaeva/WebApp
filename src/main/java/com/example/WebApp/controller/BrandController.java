@@ -10,41 +10,46 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RestController
+@Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/shop/brand")
+@RequestMapping("/api/shop/brands")
 public class BrandController {
 
     BrandService brandService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
-    public ResponseEntity<List<Brand>> getBrands() {
-        return ResponseEntity.ok(brandService.findAll());
+    public String getBrands(Model model) {
+        model.addAttribute("brands", brandService.findAll());
+        return "brands";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
+    @ResponseBody
     public ResponseEntity<Brand> addBrand(@Valid @RequestBody BrandDto brand) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brand));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{brandId}")
-    public ResponseEntity<Brand> updateBrand(@Valid @RequestBody BrandDto brand, @PathVariable Long brandId) {
-        return ResponseEntity.ok(brandService.update(brand, brandId));
+    @ResponseBody
+    public void updateBrand(@Valid @RequestBody BrandDto brand, @PathVariable Long brandId) {
+        brandService.update(brand, brandId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{brandId}")
-    public ResponseEntity<?> deleteBrand (@PathVariable Long brandId) {
+    @ResponseBody
+    public void deleteBrand (@PathVariable Long brandId) {
         brandService.delete(brandId);
-        return ResponseEntity.noContent().build();
     }
 }
 
