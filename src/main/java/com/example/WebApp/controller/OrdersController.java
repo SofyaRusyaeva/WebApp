@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
@@ -30,15 +31,17 @@ public class OrdersController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
-    public ResponseEntity<List<Orders>> findSortedAndFiltered(
+    public String findSortedAndFiltered(
             @RequestParam(defaultValue = "date") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection,
             @RequestParam(required = false) List<OrderStatus> statuses,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice) {
-        return ResponseEntity.ok(ordersService.sortAndFilter(sortBy, sortDirection, statuses, startDate, endDate, minPrice, maxPrice));
+            @RequestParam(required = false) BigDecimal maxPrice,
+            Model model) {
+        model.addAttribute("orders", ordersService.sortAndFilter(sortBy, sortDirection, statuses, startDate, endDate, minPrice, maxPrice));
+        return "ordersAdmin";
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -60,9 +63,27 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(orderId));
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @PatchMapping("/{ordersId}")
+//    @ResponseBody
+//    public ResponseEntity<Orders> updateOrders(@RequestBody @NotNull OrderStatus status, @PathVariable Long ordersId) {
+//        return ResponseEntity.ok(ordersService.update(status, ordersId));
+//    }
+
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{ordersId}")
-    public ResponseEntity<Orders> updateOrders(@RequestBody @NotNull OrderStatus status, @PathVariable Long ordersId) {
-        return ResponseEntity.ok(ordersService.update(status, ordersId));
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody Map<String, String> request) {
+
+        try {
+            OrderStatus status = OrderStatus.valueOf(request.get("status"));
+            Orders updatedOrder = ordersService.update(status, orderId);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Неверный статус заказа");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Ошибка сервера");
+        }
     }
 }

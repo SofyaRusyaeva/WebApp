@@ -21,17 +21,21 @@
         <li class="nav-item">
           <a class="nav-link" th:href="@{/api/shop/products}">Каталог</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${isAdmin}">
         <a class="nav-link" th:href= "@{/api/shop/brands}">Бренды</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${not isAdmin}">
           <a class="nav-link" th:href="@{/api/shop/cart/me}">Корзина</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${not isAdmin}">
           <a class="nav-link" th:href="@{/api/shop/orders/me}">Заказы</a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" th:if="${isAdmin}">
+          <a class="nav-link" th:href="@{/api/shop/orders}">Заказы</a>
+        </li>
+
+        <li class="nav-item" th:if="${not isAdmin}">
           <a class="nav-link" th:href="@{/api/shop/users/me}">Профиль</a>
         </li>
       </ul>
@@ -62,9 +66,3 @@
 
 </body>
 </html>
-
-
-<!-- Ссылки только для админа -->
-<!--    <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">-->
-<!--      <a th:href="@{/api/shop/users}">Пользователи</a>-->
-<!--    </li>-->

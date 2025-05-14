@@ -49,21 +49,9 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", List.of(ProductCategory.values()));
 
-//        List<Brand> brands = brandRepository.findAll();
-//
-//        List<String> brandNameList = brands.stream()
-//                .map(Brand::getName)
-//                .collect(Collectors.toList());
-//        model.addAttribute("brandNames", brandNameList);
         List<Brand> brands = brandRepository.findAll();
-        model.addAttribute("brands", brands); // Добавляем список всех брендов
+        model.addAttribute("brands", brands);
 
-        boolean isAdmin = false;
-        if (authentication != null && authentication.isAuthenticated()) {
-            isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        }
-        model.addAttribute("isAdmin", isAdmin);
 
         return "products";
     }

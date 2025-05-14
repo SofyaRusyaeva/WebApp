@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
-    List<Orders> findByUser_UserId(Long userId);
+    List<Orders> findByUser_UserIdOrderByOrderIdDesc(Long userId);
 
     List<Orders> findByDateBetween(LocalDate startDate, LocalDate endDate, Sort sort);
 

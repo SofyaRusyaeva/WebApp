@@ -57,12 +57,12 @@ public class OrdersService {
             return ordersRepository.findByDateBetween(startDate, endDate, sort);
         if (minPrice != null && maxPrice != null)
             return ordersRepository.findByTotalPriceBetween(minPrice, maxPrice, sort);
-        return ordersRepository.findAll();
+        return ordersRepository.findAll(sort);
     }
 
     public List<Orders> findByUserId (){
         Long userId = jwtProvider.getCurrentUserId();
-        return ordersRepository.findByUser_UserId(userId);
+        return ordersRepository.findByUser_UserIdOrderByOrderIdDesc(userId);
     }
 
     public List<ItemResponseDto> findByOrderId(Long orderId) {
