@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,33 +47,76 @@ public class UsersService {
         usersRepository.deleteById(userId);
     }
 
+//    public void update(UserUpdateDto newUser) {
+//        Long userId = jwtProvider.getCurrentUserId();
+//        Users oldUser = usersRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+//        if (newUser.getUserName() == null && newUser.getPhone() == null && newUser.getEmail() == null)
+//            throw new IllegalArgumentException("Not valid");
+//
+//        if (newUser.getUserName() != null)
+//            oldUser.setUserName(newUser.getUserName());
+//
+//        if (newUser.getPhone() != null)
+//            oldUser.setPhone(newUser.getPhone());
+//
+//        if (newUser.getEmail() != null) {
+//            if (usersRepository.findByEmail(newUser.getEmail()).isPresent())
+//                throw new DuplicateException(String.format("email %s already exists", newUser.getEmail()), "edit");
+//            oldUser.setEmail(newUser.getEmail());
+//        }
+//        usersRepository.save(oldUser);
+//    }
+
     public void update(UserUpdateDto newUser) {
         Long userId = jwtProvider.getCurrentUserId();
         Users oldUser = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        if (newUser.getUserName() == null && newUser.getPhone() == null && newUser.getEmail() == null)
-            throw new IllegalArgumentException("Not valid");
 
-        if (newUser.getUserName() != null)
+        // Проверяем, что хотя бы одно поле для обновления предоставлено
+        if (newUser.getUserName() == null && newUser.getPhone() == null && newUser.getEmail() == null) {
+            throw new IllegalArgumentException("Необходимо указать хотя бы одно поле для обновления");
+        }
+
+        if (newUser.getUserName() != null && !newUser.getUserName().isBlank()) {
             oldUser.setUserName(newUser.getUserName());
+        }
 
-        if (newUser.getPhone() != null)
+        if (newUser.getPhone() != null && !newUser.getPhone().isBlank()) {
             oldUser.setPhone(newUser.getPhone());
+        }
 
-        if (newUser.getEmail() != null) {
-            if (usersRepository.findByEmail(newUser.getEmail()).isPresent())
-                throw new DuplicateException(String.format("email %s already exists", newUser.getEmail()), "edit");
+        if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
+            if (usersRepository.findByEmail(newUser.getEmail())
+                    .filter(u -> !u.getUserId().equals(userId)) // Игнорируем текущего пользователя
+                    .isPresent()) {
+                throw new DuplicateException(String.format("email %s уже существует", newUser.getEmail()), "edit");
+            }
             oldUser.setEmail(newUser.getEmail());
         }
+
         usersRepository.save(oldUser);
     }
 
 
+//    public void updatePassword(PasswordDto passwordDto) {
+//        Users user = usersRepository.findById(jwtProvider.getCurrentUserId())
+//                .orElseThrow(() -> new ObjectNotFoundException("User not found"));
+//        if(user.getPassword().equals(passwordEncoder.encode(passwordDto.getOldPass())))
+//            user.setPassword(passwordEncoder.encode(passwordDto.getNewPass()));
+//        usersRepository.save(user);
+//    }
+
+    @Transactional
     public void updatePassword(PasswordDto passwordDto) {
         Users user = usersRepository.findById(jwtProvider.getCurrentUserId())
                 .orElseThrow(() -> new ObjectNotFoundException("User not found"));
-        if(user.getPassword().equals(passwordEncoder.encode(passwordDto.getOldPass())))
-            user.setPassword(passwordEncoder.encode(passwordDto.getNewPass()));
+
+        if (!passwordEncoder.matches(passwordDto.getOldPass(), user.getPassword())) {
+            throw new IllegalArgumentException("Текущий пароль неверен");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordDto.getNewPass()));
         usersRepository.save(user);
     }
 

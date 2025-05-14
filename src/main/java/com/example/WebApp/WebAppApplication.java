@@ -5,15 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-// TODO: Корзина
 // TODO: Заказы
 // TODO: Страница пользователя
-
-// TODO: Шапка меню со всеми страницами и на ней кнопка logout
 
 // TODO: Автоматически обновлять токен при протухании
 
 // TODO: Добавить картинки к товарам
+// TODO: Множественный выбор в каталоге
 
 @SpringBootApplication
 @EnableScheduling

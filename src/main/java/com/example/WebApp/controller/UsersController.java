@@ -6,6 +6,8 @@ import com.example.WebApp.dto.UserUpdateDto;
 import com.example.WebApp.dto.UsersDto;
 import com.example.WebApp.model.Users;
 import com.example.WebApp.service.UsersService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +15,14 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/shop/users")
 public class UsersController {
@@ -34,19 +38,21 @@ public class UsersController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
-    public  ResponseEntity<Users> getMe() {
+    public String getMe(Model model) {
         Long userId = jwtProvider.getCurrentUserId();
-        return ResponseEntity.ok(usersService.findById(userId));
+        model.addAttribute("user", usersService.findById(userId));
+        return "profile";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{userId}")
-    public  ResponseEntity<Users> getUserById(@PathVariable Long userId) {
-        return ResponseEntity.ok(usersService.findById(userId));
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/{userId}")
+//    public  ResponseEntity<Users> getUserById(@PathVariable Long userId) {
+//        return ResponseEntity.ok(usersService.findById(userId));
+//    }
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/me/edit")
+    @ResponseBody
     public ResponseEntity<Users> updateUsers(@RequestBody UserUpdateDto users) {
         usersService.update(users);
         return ResponseEntity.ok().build();
@@ -54,6 +60,7 @@ public class UsersController {
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/me/edit/password")
+    @ResponseBody
     public ResponseEntity<?> updatePassword(@RequestBody PasswordDto passwordDto) {
         usersService.updatePassword(passwordDto);
         return ResponseEntity.ok().build();
@@ -61,9 +68,16 @@ public class UsersController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/me")
-    public ResponseEntity<?> deleteUsers () {
+    @ResponseBody
+    public ResponseEntity<?> deleteUsers (HttpServletResponse response) {
         Long userId = jwtProvider.getCurrentUserId();
         usersService.delete(userId);
+
+        Cookie cookie = new Cookie("access_token", null);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // удалить куку
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return ResponseEntity.noContent().build();
     }
 }
