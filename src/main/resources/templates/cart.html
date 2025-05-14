@@ -3,46 +3,68 @@
 <head>
     <title>Корзина</title>
     <th:block th:insert="~{header :: head}"></th:block>
-
-
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .form-container {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border: 1px solid #000000;
+        }
+        .table-container {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            border: 1px solid #000000;
+        }
+    </style>
 </head>
 <body>
 <th:block th:insert="~{header :: nav}"></th:block>
 
+<div class="container mt-4">
+    <h1 class="mb-4">Корзина</h1>
 
-<h1>Корзина</h1>
-
-<hr>
-
-<div>
-    <div th:if="${cart != null and not cart.cartItems.empty}">
-        <div class="cart-grid">
-            <div class="cart-item-card" th:each="cartItem : ${cart.cartItems}">
-                <h2><strong></strong> <span th:text="${cartItem.productName}"></span></h2>
-                <p><strong>Количество</strong> <span th:text="${cartItem.quantity}"></span></p>
-                <p><strong>Цена</strong> <span th:text="${cartItem.totalPrice}"></span></p>
-                <div class = "cart-item-actions">
-                    <button th:attr="onclick=${'increase(' + cartItem.itemId + ')'}" class="btn btn-primary">+</button>
-                    <button th:attr="onclick=${'decrease(' + cartItem.itemId + ')'}" class="btn btn-primary">-</button>
-                    <button th:attr="onclick=${'del(' + cartItem.itemId + ')'}" class="btn btn-danger">delete</button>
-                </div>
+    <div th:if="${cart != null and not cart.cartItems.empty}" class="table-container">
+        <div th:each="cartItem : ${cart.cartItems}" class="cart-item"
+             style="border-bottom: 1px solid #ddd; padding: 1rem 0;">
+            <h4 th:text="${cartItem.productName}"></h4>
+            <p><strong>Количество:</strong> <span th:text="${cartItem.quantity}"></span></p>
+            <p><strong>Цена:</strong> <span th:text="${cartItem.totalPrice}"></span></p>
+            <div class="d-flex gap-2">
+                <button th:attr="onclick=${'increase(' + cartItem.itemId + ')'}" class="btn btn-primary">+</button>
+                <button th:attr="onclick=${'decrease(' + cartItem.itemId + ')'}" class="btn btn-primary">-</button>
+                <button th:attr="onclick=${'del(' + cartItem.itemId + ')'}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
             </div>
         </div>
-        <div><h2>Итого: <span th:text="${cart.totalPrice}"></span></h2></div>
 
-
-        <div class="cart-actions">
-            <button onclick="clearCart()" class="btn btn-danger">Очистить корзину</button>
-            <button onclick="createOrder()" class="btn btn-primary">Оформить заказ</button>
+        <div class="mt-4">
+            <h4>Итого: <span th:text="${cart.totalPrice}"></span></h4>
         </div>
 
+        <div class="cart-actions justify-content-end">
+            <button onclick="clearCart()" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Очистить корзину
+            </button>
+            <button onclick="createOrder()" class="btn btn-primary">
+                <i class="bi bi-bag-check"></i>  Оформить заказ
+            </button>
+        </div>
     </div>
-    <div th:if="${cart == null or cart.cartItems.empty}">
-        <h2>Корзина пуста</h2>
+
+    <div th:if="${cart == null or cart.cartItems.empty}" class="form-container">
+        <h4>Корзина пуста</h4>
     </div>
 </div>
+
+</body>
+</html>
 
 <script>
     function createOrder() {
