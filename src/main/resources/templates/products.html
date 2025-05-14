@@ -1,163 +1,420 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Каталог товаров</title>-->
+<!--    <th:block th:insert="~{header :: head}"></th:block>-->
+
+<!--    <meta charset="UTF-8">-->
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
+<!--</head>-->
+<!--<body>-->
+<!--<th:block th:insert="~{header :: nav}"></th:block>-->
+
+<!--<h1>Каталог товаров</h1>-->
+
+<!--<form method="get" action="#" th:action="@{products}" id="filter-form">-->
+<!--    <label for="sortBy">Сортировать по:</label>-->
+<!--    <select name="sortBy" id="sortBy">-->
+<!--        <option value="name">названию</option>-->
+<!--        <option value="price">цене</option>-->
+<!--    </select>-->
+
+<!--    <label for="sortDirection">Сортировка по:</label>-->
+<!--    <select name="sortDirection" id="sortDirection">-->
+<!--        <option value="asc">возрастанию</option>-->
+<!--        <option value="desc">убыванию</option>-->
+<!--    </select>-->
+
+<!--    <label for="categories">Категория:</label>-->
+<!--    <select name="categories" id="categories" multiple>-->
+<!--        <option th:each="category : ${categories}"-->
+<!--                th:value="${category}"-->
+<!--                th:text="${category}">-->
+<!--        </option>-->
+<!--    </select>-->
+
+<!--    <label for="brandNames">Бренд:</label>-->
+<!--    <select name="brandNames" id="brandNames" multiple>-->
+<!--        <option th:each="brand : ${brands}"-->
+<!--                th:value="${brand.name}"-->
+<!--                th:text="${brand.name}">-->
+<!--        </option>-->
+<!--    </select>-->
+
+<!--    <label for="minPrice">Минимальная цена:</label>-->
+<!--    <input type="number" step="0.01" name="minPrice" id="minPrice">-->
+
+<!--    <label for="maxPrice">Максимальная цена:</label>-->
+<!--    <input type="number" step="0.01" name="maxPrice" id="maxPrice">-->
+
+<!--    <button type="submit">Apply</button>-->
+<!--</form>-->
+
+<!--<hr>-->
+
+<!--<div>-->
+<!--    <div th:if="${isAdmin}">-->
+<!--        <button type="button" onclick="toggleCreateForm()">Добавить новый товар</button>-->
+<!--        <div class="create-form" id="create-form" style="display: none;">-->
+<!--            <h3>Создание нового товара</h3>-->
+<!--            <form id="create-product-form">-->
+<!--                <label for="new-name">Название:</label>-->
+<!--                <input type="text" id="new-name" name="name" required>-->
+
+<!--                <label for="new-description">Описание:</label>-->
+<!--                <textarea id="new-description" name="description" required></textarea>-->
+
+<!--                <label for="new-category">Категория:</label>-->
+<!--                <select id="new-category" name="category" required>-->
+<!--                    <option value="">Выберите категорию</option>-->
+<!--                    <option th:each="category : ${T(com.example.WebApp.model.ProductCategory).values()}"-->
+<!--                            th:value="${category}"-->
+<!--                            th:text="${category}">-->
+<!--                    </option>-->
+<!--                </select>-->
+
+<!--                <label for="new-price">Цена:</label>-->
+<!--                <input type="number" step="0.01" id="new-price" name="price" required>-->
+<!--                <label for="new-brandName">Бренд:</label>-->
+<!--                <select id="new-brandName" name="brandName" required>-->
+<!--                    <option value="">Выберите бренд</option>-->
+<!--                    <option th:each="brand : ${brands}"-->
+<!--                            th:value="${brand.name}"-->
+<!--                            th:text="${brand.name}">-->
+<!--                    </option>-->
+<!--                </select>-->
+<!--                <button type="button" onclick="showAddBrandForm()">+ Новый бренд</button>-->
+
+<!--                <div id="add-brand-form" style="display: none;">-->
+<!--                    <label for="new-brand-input">Название нового бренда:</label>-->
+<!--                    <input type="text" id="new-brand-input" name = "brand-name" required>-->
+<!--                    <label for="new-country">Страна:</label>-->
+<!--                    <select id="new-country" name="brand-country" required>-->
+<!--                        <option value="">Выберите страну</option>-->
+<!--                        <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"-->
+<!--                                th:value="${country}"-->
+<!--                                th:text="${country}">-->
+<!--                        </option>-->
+<!--                    </select>-->
+<!--                    <button type="button" onclick="addNewBrand()">Добавить</button>-->
+<!--                    <button type="button" onclick="showAddBrandForm()">Отмена</button>-->
+<!--                </div>-->
+
+<!--                <button type="button" onclick="createProduct()">Создать товар</button>-->
+<!--                <button type="button" onclick="toggleCreateForm()">Отмена</button>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+
+<!--    &lt;!&ndash;&ndash;&gt;-->
+
+<!--    <div class="product-grid">-->
+<!--        <div class="product-card" th:each="product : ${products}">-->
+<!--            <h2 th:text="${product.name}">Название</h2>-->
+<!--            <p><strong>Категория:</strong> <span th:text="${product.category}">Категория</span></p>-->
+<!--            <p><strong>Описание:</strong> <span th:text="${product.description}">Описание</span></p>-->
+<!--            <p><strong>Бренд:</strong> <span th:text="${product.brandName}">Бренд</span></p>-->
+<!--            <p><strong>Цена:</strong> <span th:text="${product.price}">0.00</span> ₽</p>-->
+
+<!--            <button type="button"-->
+<!--                    th:if="${not isAdmin}"-->
+<!--                    th:attr="onclick=${'addToCart(' + product.id + ')'}">-->
+<!--                Добавить в корзину-->
+<!--            </button>-->
+
+<!--            <button type="button"-->
+<!--                    th:if="${isAdmin}"-->
+<!--                    th:attr="onclick=${'deleteProduct(' + product.id + ')'}">-->
+<!--                Удалить товар-->
+<!--            </button>-->
+
+<!--            <button type="button"-->
+<!--                    th:if="${isAdmin}"-->
+<!--                    th:onclick="'toggleEditForm(' + ${product.id} + ')'">-->
+<!--                Редактировать товар-->
+<!--            </button>-->
+
+<!--            <div th:if="${isAdmin}" class="edit-form" th:id="'edit-form-' + ${product.id}" style="display: none;">-->
+<!--                <h3>Редактирование товара</h3>-->
+<!--                <form th:id="'edit-product-form-' + ${product.id}">-->
+<!--                    <input type="hidden" name="productId" th:value="${product.id}">-->
+
+<!--                    <label for="name">Название:</label>-->
+<!--                    <input type="text" id="name" name="name" th:value="${product.name}" required>-->
+
+<!--                    <label for="description">Описание:</label>-->
+<!--                    <textarea id="description" name="description" required th:text="${product.description}"></textarea>-->
+
+<!--                    <label for="price">Цена:</label>-->
+<!--                    <input type="number" step="0.01" id="price" name="price" th:value="${product.price}" required>-->
+
+<!--                    <button type="button" th:onclick="'saveProduct(' + ${product.id} + ')'">Сохранить</button>-->
+<!--                    <button type="button" th:onclick="'toggleEditForm(' + ${product.id} + ')'">Отмена</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Каталог товаров</title>
     <th:block th:insert="~{header :: head}"></th:block>
-
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .filter-section {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #000000;
+        }
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        .filter-form button {
+            align-self: end;
+            height: fit-content;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .product-image {
+            height: 200px;
+            object-fit: contain;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border: 1px solid #000000;
+        }
+    </style>
 </head>
 <body>
 <th:block th:insert="~{header :: nav}"></th:block>
 
-<h1>Каталог товаров</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">Каталог товаров</h1>
 
-<form method="get" action="#" th:action="@{products}" id="filter-form">
-    <label for="sortBy">Сортировать по:</label>
-    <select name="sortBy" id="sortBy">
-        <option value="name">названию</option>
-        <option value="price">цене</option>
-    </select>
+    <div class="filter-section">
+        <form method="get" action="#" th:action="@{products}" id="filter-form" class="filter-form">
+            <div>
+                <label for="sortBy" class="form-label">Сортировать по:</label>
+                <select name="sortBy" id="sortBy" class="form-select">
+                    <option value="name">названию</option>
+                    <option value="price">цене</option>
+                </select>
+            </div>
 
-    <label for="sortDirection">Сортировка по:</label>
-    <select name="sortDirection" id="sortDirection">
-        <option value="asc">возрастанию</option>
-        <option value="desc">убыванию</option>
-    </select>
+            <div>
+                <label for="sortDirection" class="form-label">Направление:</label>
+                <select name="sortDirection" id="sortDirection" class="form-select">
+                    <option value="asc">возрастанию</option>
+                    <option value="desc">убыванию</option>
+                </select>
+            </div>
 
-    <label for="categories">Категория:</label>
-    <select name="categories" id="categories" multiple>
-        <option th:each="category : ${categories}"
-                th:value="${category}"
-                th:text="${category}">
-        </option>
-    </select>
-
-    <label for="brandNames">Бренд:</label>
-    <select name="brandNames" id="brandNames" multiple>
-        <option th:each="brand : ${brands}"
-                th:value="${brand.name}"
-                th:text="${brand.name}">
-        </option>
-    </select>
-
-    <label for="minPrice">Минимальная цена:</label>
-    <input type="number" step="0.01" name="minPrice" id="minPrice">
-
-    <label for="maxPrice">Максимальная цена:</label>
-    <input type="number" step="0.01" name="maxPrice" id="maxPrice">
-
-    <button type="submit">Apply</button>
-</form>
-
-<hr>
-
-<div>
-    <div th:if="${isAdmin}">
-        <button type="button" onclick="toggleCreateForm()">Добавить новый товар</button>
-        <div class="create-form" id="create-form" style="display: none;">
-            <h3>Создание нового товара</h3>
-            <form id="create-product-form">
-                <label for="new-name">Название:</label>
-                <input type="text" id="new-name" name="name" required>
-
-                <label for="new-description">Описание:</label>
-                <textarea id="new-description" name="description" required></textarea>
-
-                <label for="new-category">Категория:</label>
-                <select id="new-category" name="category" required>
-                    <option value="">Выберите категорию</option>
-                    <option th:each="category : ${T(com.example.WebApp.model.ProductCategory).values()}"
+            <div>
+                <label for="categories" class="form-label">Категория:</label>
+                <select name="categories" id="categories" class="form-select" multiple size="2">
+                    <option th:each="category : ${categories}"
                             th:value="${category}"
                             th:text="${category}">
                     </option>
                 </select>
+            </div>
 
-                <label for="new-price">Цена:</label>
-                <input type="number" step="0.01" id="new-price" name="price" required>
-                <label for="new-brandName">Бренд:</label>
-                <select id="new-brandName" name="brandName" required>
-                    <option value="">Выберите бренд</option>
+            <div>
+                <label for="brandNames" class="form-label">Бренд:</label>
+                <select name="brandNames" id="brandNames" class="form-select" multiple size="2">
                     <option th:each="brand : ${brands}"
                             th:value="${brand.name}"
                             th:text="${brand.name}">
                     </option>
                 </select>
-                <button type="button" onclick="showAddBrandForm()">+ Новый бренд</button>
+            </div>
 
-                <div id="add-brand-form" style="display: none;">
-                    <label for="new-brand-input">Название нового бренда:</label>
-                    <input type="text" id="new-brand-input" name = "brand-name" required>
-                    <label for="new-country">Страна:</label>
-                    <select id="new-country" name="brand-country" required>
-                        <option value="">Выберите страну</option>
-                        <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
-                                th:value="${country}"
-                                th:text="${country}">
-                        </option>
-                    </select>
-                    <button type="button" onclick="addNewBrand()">Добавить</button>
-                    <button type="button" onclick="showAddBrandForm()">Отмена</button>
+            <div>
+                <label for="minPrice" class="form-label">Мин. цена:</label>
+                <input type="number" name="minPrice" id="minPrice" class="form-control">
+            </div>
+
+            <div>
+                <label for="maxPrice" class="form-label">Макс. цена:</label>
+                <input type="number" name="maxPrice" id="maxPrice" class="form-control">
+            </div>
+
+            <button class="btn btn-outline-primary" type="submit">Применить</button>
+        </form>
+    </div>
+
+    <div th:if="${isAdmin}" class="mb-4">
+        <button type="button" class="btn btn-outline-primary" onclick="toggleCreateForm()">Добавить новый товар</button>
+        <div class="create-form form-container" id="create-form" style="display: none;">
+            <h3 class="mb-3">Создание нового товара</h3>
+            <form id="create-product-form">
+                <div class="mb-3">
+                    <label for="new-name" class="form-label">Название:</label>
+                    <input type="text" class="form-control" id="new-name" name="name" required>
                 </div>
 
-                <button type="button" onclick="createProduct()">Создать товар</button>
-                <button type="button" onclick="toggleCreateForm()">Отмена</button>
+                <div class="mb-3">
+                    <label for="new-description" class="form-label">Описание:</label>
+                    <textarea class="form-control" id="new-description" name="description" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="new-category" class="form-label">Категория:</label>
+                    <select class="form-select" id="new-category" name="category" required>
+                        <option value="">Выберите категорию</option>
+                        <option th:each="category : ${T(com.example.WebApp.model.ProductCategory).values()}"
+                                th:value="${category}"
+                                th:text="${category}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="new-price" class="form-label">Цена:</label>
+                    <input type="number" class="form-control" id="new-price" name="price" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="new-brandName" class="form-label">Бренд:</label>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="new-brandName" name="brandName" required>
+                            <option value="">Выберите бренд</option>
+                            <option th:each="brand : ${brands}"
+                                    th:value="${brand.name}"
+                                    th:text="${brand.name}">
+                            </option>
+                        </select>
+                        <button type="button" onclick="showAddBrandForm()" class="btn btn-outline-secondary">+</button>
+                    </div>
+                </div>
+
+                <div id="add-brand-form" style="display: none;" class="form-container mb-3">
+                    <h5 class="mb-3">Добавить новый бренд</h5>
+                    <div class="mb-3">
+                        <label for="new-brand-input" class="form-label">Название:</label>
+                        <input type="text" class="form-control" id="new-brand-input" name="brand-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-country" class="form-label">Страна:</label>
+                        <select class="form-select" id="new-country" name="brand-country" required>
+                            <option value="">Выберите страну</option>
+                            <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
+                                    th:value="${country}"
+                                    th:text="${country}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" onclick="addNewBrand()" class="btn btn-primary">Добавить</button>
+                        <button type="button" onclick="showAddBrandForm()" class="btn btn-outline-secondary">Отмена</button>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" onclick="createProduct()" class="btn btn-primary">Создать товар</button>
+                    <button type="button" onclick="toggleCreateForm()" class="btn btn-outline-secondary">Отмена</button>
+                </div>
             </form>
         </div>
     </div>
 
-
-
-    <!---->
-
     <div class="product-grid">
-        <div class="product-card" th:each="product : ${products}">
-            <h2 th:text="${product.name}">Название</h2>
-            <p><strong>Категория:</strong> <span th:text="${product.category}">Категория</span></p>
-            <p><strong>Описание:</strong> <span th:text="${product.description}">Описание</span></p>
-            <p><strong>Бренд:</strong> <span th:text="${product.brandName}">Бренд</span></p>
-            <p><strong>Цена:</strong> <span th:text="${product.price}">0.00</span> ₽</p>
+        <div class="card" th:each="product : ${products}">
+            <div class="card-header">
+                <h3 class="card-title" th:text="${product.name}">Название</h3>
+                <h6 class="card-subtitle text-muted" th:text="${product.category}">Категория</h6>
+            </div>
 
-            <button type="button"
-                    th:if="${not isAdmin}"
-                    th:attr="onclick=${'addToCart(' + product.id + ')'}">
-                Добавить в корзину
-            </button>
+            <div class="product-image">
+                <span class="text-muted">Изображение товара</span>
+            </div>
 
-            <button type="button"
-                    th:if="${isAdmin}"
-                    th:attr="onclick=${'deleteProduct(' + product.id + ')'}">
-                Удалить товар
-            </button>
+            <div class="card-body">
+                <p class="card-text" th:text="${product.description}">Описание</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item"><strong>Бренд:</strong> <span th:text="${product.brandName}">Бренд</span></li>
+                    <li class="list-group-item"><strong>Цена:</strong> <span th:text="${product.price}">0.00</span> ₽</li>
+                </ul>
 
-            <button type="button"
-                    th:if="${isAdmin}"
-                    th:onclick="'toggleEditForm(' + ${product.id} + ')'">
-                Редактировать товар
-            </button>
+                <div class="d-flex gap-2">
+                    <button type="button"
+                            th:if="${not isAdmin}"
+                            class="btn btn-primary"
+                            th:attr="onclick=${'addToCart(' + product.id + ')'}">
+                        Добавить в корзину
+                    </button>
 
-            <div th:if="${isAdmin}" class="edit-form" th:id="'edit-form-' + ${product.id}" style="display: none;">
-                <h3>Редактирование товара</h3>
+                    <div th:if="${isAdmin}" class="admin-buttons">
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                th:attr="onclick=${'deleteProduct(' + product.id + ')'}">
+                            Удалить
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline-primary"
+                                th:onclick="'toggleEditForm(' + ${product.id} + ')'">
+                            Редактировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${isAdmin}" class="edit-form form-container" th:id="'edit-form-' + ${product.id}" style="display: none;">
+                <h4 class="mb-3">Редактирование товара</h4>
                 <form th:id="'edit-product-form-' + ${product.id}">
                     <input type="hidden" name="productId" th:value="${product.id}">
 
-                    <label for="name">Название:</label>
-                    <input type="text" id="name" name="name" th:value="${product.name}" required>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название:</label>
+                        <input type="text" class="form-control" id="name" name="name" th:value="${product.name}" required>
+                    </div>
 
-                    <label for="description">Описание:</label>
-                    <textarea id="description" name="description" required th:text="${product.description}"></textarea>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание:</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required th:text="${product.description}"></textarea>
+                    </div>
 
-                    <label for="price">Цена:</label>
-                    <input type="number" step="0.01" id="price" name="price" th:value="${product.price}" required>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Цена:</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" th:value="${product.price}" required>
+                    </div>
 
-                    <button type="button" th:onclick="'saveProduct(' + ${product.id} + ')'">Сохранить</button>
-                    <button type="button" th:onclick="'toggleEditForm(' + ${product.id} + ')'">Отмена</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary" th:onclick="'saveProduct(' + ${product.id} + ')'">Сохранить</button>
+                        <button type="button" class="btn btn-outline-secondary" th:onclick="'toggleEditForm(' + ${product.id} + ')'">Отмена</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
     function addToCart(productId) {
