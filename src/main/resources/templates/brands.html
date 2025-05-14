@@ -1,87 +1,204 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Brands</title>-->
+<!--    <th:block th:insert="~{header :: head}"></th:block>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
+<!--</head>-->
+<!--<body>-->
+<!--<th:block th:insert="~{header :: nav}"></th:block>-->
+
+<!--<h1>Brands</h1>-->
+
+<!--<hr>-->
+
+<!--<div>-->
+<!--    <button type="button" onclick="showAddBrandForm()">+ Новый бренд</button>-->
+<!--    <div id="add-brand-form" style="display: none;">-->
+<!--        <label for="new-brand-input">Название нового бренда:</label>-->
+<!--        <input type="text" id="new-brand-input" name="brand-name" required>-->
+<!--        <label for="new-country">Страна:</label>-->
+<!--        <select id="new-country" name="brand-country" required>-->
+<!--            <option value="">Выберите страну</option>-->
+<!--            <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"-->
+<!--                    th:value="${country}"-->
+<!--                    th:text="${country}">-->
+<!--            </option>-->
+<!--        </select>-->
+<!--        <button type="button" onclick="addNewBrand()">Добавить</button>-->
+<!--        <button type="button" onclick="showAddBrandForm()">Отмена</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash;&ndash;&gt;-->
+
+<!--</div>-->
+
+<!--<div>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Название бренда</th>-->
+<!--            <th>Страна</th>-->
+<!--            <th>Удалить</th>-->
+<!--            <th>Редактировать</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="brand : ${brands}">-->
+<!--            <td th:text="${brand.name}">Название</td>-->
+<!--            <td th:text="${brand.country}">Страна</td>-->
+<!--            <td>-->
+<!--                <button type="button"-->
+<!--                        th:attr="onclick=${'deleteBrand(' + brand.brandId + ')'}">-->
+<!--                    Удалить-->
+<!--                </button>-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                <button type="button"-->
+<!--                        th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">-->
+<!--                    Редактировать-->
+<!--                </button>-->
+
+<!--                <div th:id="'edit-brand-form-' + ${brand.brandId}" style="display: none;">-->
+<!--                    <label>Название:</label>-->
+<!--                    <input type="text" th:id="'edit-brand-input-' + ${brand.brandId}" th:value="${brand.name}" required>-->
+<!--                    <label>Страна:</label>-->
+<!--                    <select th:id="'edit-country-' + ${brand.brandId}" required>-->
+<!--                        <option value="">Выберите страну</option>-->
+<!--                        <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"-->
+<!--                                th:value="${country}"-->
+<!--                                th:selected="${brand.country == country}"-->
+<!--                                th:text="${country}">-->
+<!--                        </option>-->
+<!--                    </select>-->
+<!--                    <button type="button" th:onclick="'updateBrand(' + ${brand.brandId} + ')'">Сохранить</button>-->
+<!--                    <button type="button" th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">Отмена</button>-->
+<!--                </div>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Brands</title>
+    <title>Бренды</title>
     <th:block th:insert="~{header :: head}"></th:block>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .form-container {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border: 1px solid #000000;
+        }
+        .table-container {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            border: 1px solid #000000;
+        }
+        .admin-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
 <body>
 <th:block th:insert="~{header :: nav}"></th:block>
 
-<h1>Brands</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">Бренды</h1>
 
-<hr>
-
-<div>
-    <button type="button" onclick="showAddBrandForm()">+ Новый бренд</button>
-    <div id="add-brand-form" style="display: none;">
-        <label for="new-brand-input">Название нового бренда:</label>
-        <input type="text" id="new-brand-input" name="brand-name" required>
-        <label for="new-country">Страна:</label>
-        <select id="new-country" name="brand-country" required>
-            <option value="">Выберите страну</option>
-            <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
-                    th:value="${country}"
-                    th:text="${country}">
-            </option>
-        </select>
-        <button type="button" onclick="addNewBrand()">Добавить</button>
-        <button type="button" onclick="showAddBrandForm()">Отмена</button>
+    <div class="mb-4">
+        <button type="button" class="btn btn-outline-primary" onclick="showAddBrandForm()">+ Новый бренд</button>
+        <div id="add-brand-form" style="display: none;" class="form-container">
+            <h3 class="mb-3">Добавление нового бренда</h3>
+            <div class="mb-3">
+                <label for="new-brand-input" class="form-label">Название бренда:</label>
+                <input type="text" class="form-control" id="new-brand-input" name="brand-name" required>
+            </div>
+            <div class="mb-3">
+                <label for="new-country" class="form-label">Страна:</label>
+                <select class="form-select" id="new-country" name="brand-country" required>
+                    <option value="">Выберите страну</option>
+                    <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
+                            th:value="${country}"
+                            th:text="${country}">
+                    </option>
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary" onclick="addNewBrand()">Добавить</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="showAddBrandForm()">Отмена</button>
+            </div>
+        </div>
     </div>
 
-    <!---->
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Название бренда</th>
+                <th>Страна</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr style="border-bottom: 2px solid #e0e0e0; border-top: 2px solid #e0e0e0;"
+                th:each="brand : ${brands}">
+                <td th:text="${brand.name}">Название</td>
+                <td th:text="${brand.country}">Страна</td>
+                <td>
+                    <div class="admin-buttons">
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                th:attr="onclick=${'deleteBrand(' + brand.brandId + ')'}">
+                            Удалить
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline-primary"
+                                th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">
+                            Редактировать
+                        </button>
+                    </div>
 
+                    <div th:id="'edit-brand-form-' + ${brand.brandId}" style="display: none;" class="form-container mt-2">
+                        <h5 class="mb-3">Редактирование бренда</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Название:</label>
+                            <input type="text" class="form-control" th:id="'edit-brand-input-' + ${brand.brandId}" th:value="${brand.name}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Страна:</label>
+                            <select class="form-select" th:id="'edit-country-' + ${brand.brandId}" required>
+                                <option value="">Выберите страну</option>
+                                <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
+                                        th:value="${country}"
+                                        th:selected="${brand.country == country}"
+                                        th:text="${country}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary" th:onclick="'updateBrand(' + ${brand.brandId} + ')'">Сохранить</button>
+                            <button type="button" class="btn btn-outline-secondary" th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">Отмена</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<div>
-    <table>
-        <thead>
-        <tr>
-            <th>Название бренда</th>
-            <th>Страна</th>
-            <th>Удалить</th>
-            <th>Редактировать</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="brand : ${brands}">
-            <td th:text="${brand.name}">Название</td>
-            <td th:text="${brand.country}">Страна</td>
-            <td>
-                <button type="button"
-                        th:attr="onclick=${'deleteBrand(' + brand.brandId + ')'}">
-                    Удалить
-                </button>
-            </td>
-
-            <td>
-                <button type="button"
-                        th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">
-                    Редактировать
-                </button>
-
-                <div th:id="'edit-brand-form-' + ${brand.brandId}" style="display: none;">
-                    <label>Название:</label>
-                    <input type="text" th:id="'edit-brand-input-' + ${brand.brandId}" th:value="${brand.name}" required>
-                    <label>Страна:</label>
-                    <select th:id="'edit-country-' + ${brand.brandId}" required>
-                        <option value="">Выберите страну</option>
-                        <option th:each="country : ${T(com.example.WebApp.model.Country).values()}"
-                                th:value="${country}"
-                                th:selected="${brand.country == country}"
-                                th:text="${country}">
-                        </option>
-                    </select>
-                    <button type="button" th:onclick="'updateBrand(' + ${brand.brandId} + ')'">Сохранить</button>
-                    <button type="button" th:onclick="'toggleEditForm(' + ${brand.brandId} + ')'">Отмена</button>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
 
 <script>
     function deleteBrand(brandId) {

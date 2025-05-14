@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--<html xmlns:th="http://www.thymeleaf.org" th:replace="fragments/layout :: layout (~{::body}, ~{::title})">-->
 <head>
   <meta charset="UTF-8">
   <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css" rel="stylesheet">
@@ -8,47 +7,6 @@
   <title>Вход</title>
 </head>
 <body>
-<!--<h2>Войти в аккаунт</h2>-->
-
-<!--<div th:if="${error}" class="alert alert-dismissible alert-danger">-->
-<!--  <span class="modal-close" onclick="this.parentElement.style.display='none';">&times;</span>-->
-<!--  <p th:text="${error}"></p>-->
-<!--</div>-->
-<!--<div th:if="${error}" style="color:red;">-->
-<!--  <p th:text="${error}"></p>-->
-<!--</div>-->
-<!--<form th:action="@{/api/auth/login}" method="post">-->
-<!--  <label>Email: <input type="text" name="email"/></label><br/>-->
-<!--  <label>Пароль: <input type="password" name="password"/></label><br/>-->
-<!--  <button type="submit">Login</button>-->
-<!--</form>-->
-
-<!--<div>-->
-<!--  <form th:action="@{/api/auth/register}" method="get">-->
-<!--    <button type="submit">Нет аккаунта?</button>-->
-<!--  </form>-->
-<!--</div>-->
-
-<!--<form th:action="@{/api/auth/login}" method="post">-->
-<!--  <fieldset>-->
-<!--    <legend>Войти в аккаунт</legend>-->
-<!--    <div>-->
-<!--      <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>-->
-<!--      <input type="text" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">-->
-<!--      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--      <label for="exampleInputPassword1" class="form-label mt-4">Password</label>-->
-<!--      <input input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" autocomplete="off">-->
-<!--    </div>-->
-<!--    <div>-->
-<!--      <button type="submit" class="btn btn-primary">Войти</button>-->
-<!--    </div>-->
-<!--    <div th:action="@{/api/auth/register}" method="get">-->
-<!--      <button type="submit" class="btn btn-outline-primary">Нет аккаунта?</button>-->
-<!--    </div>-->
-<!--  </fieldset>-->
-<!--</form>-->
 
 <div class="container mt-5">
   <form th:action="@{/api/auth/login}" method="post" class="mx-auto" style="max-width: 400px;">
