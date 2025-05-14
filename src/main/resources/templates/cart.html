@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Корзина</title>
+    <th:block th:insert="~{header :: head}"></th:block>
+
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<th:block th:insert="~{header :: nav}"></th:block>
+
+
+<h1>Корзина</h1>
+
+
+<hr>
+
+
+<div>
+    <div th:if="${cart != null and not cart.cartItems.empty}">
+        <div class="cart-grid">
+            <div class="cart-item-card" th:each="cartItem : ${cart.cartItems}">
+                <h2><strong>Название</strong> <span th:text="${cartItem.productName}"></span></h2>
+                <p><strong>Количество</strong> <span th:text="${cartItem.quantity}"></span></p>
+                <p><strong>Цена</strong> <span th:text="${cartItem.totalPrice}"></span></p>
+            </div>
+        </div>
+        <div><h2>Итого: <span th:text="${cart.totalPrice}"></span></h2></div>
+    </div>
+    <div th:if="${cart == null or cart.cartItems.empty}">
+        <h2>Корзина пуста</h2>
+    </div>
+</div>
+
+
+
+
+<!--<script>-->
+
+
+<!--</script>-->
+
+
+
+
+</body>
+</html>

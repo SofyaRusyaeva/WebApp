@@ -41,7 +41,6 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setClaims(claims)
-//                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)

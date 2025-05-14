@@ -1,4 +1,7 @@
+
 package com.example.WebApp.controller;
+
+
 
 
 import com.example.WebApp.config.JwtProvider;
@@ -11,55 +14,73 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/shop/cart")
 public class CartController {
 
+
     CartService cartService;
+
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/createOrder")
+    @ResponseBody
     public ResponseEntity<Orders> createOrderFromCart() {
         Orders order = cartService.createOrderFromCart();
         return ResponseEntity.ok(order);
     }
+
 
 //    @PostMapping()
 //    public ResponseEntity<Cart> addCart(@Valid @RequestBody CartDto cart) {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
 //    }
 
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
+    @ResponseBody
     public ResponseEntity<List<Cart>> getCarts() {
         return ResponseEntity.ok(cartService.findAll());
     }
 
+
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
-    public ResponseEntity<CartDto> getCartItems() {
-        return ResponseEntity.ok(cartService.findMyCart());
+    public String getCartItems(Model model) {
+        model.addAttribute("cart", cartService.findMyCart());
+        return "cart";
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{userId}")
+    @ResponseBody
     public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
         return ResponseEntity.ok(cartService.findByUserId(userId));
     }
+
 
 //    @PutMapping("/{cartId}")
 //    public ResponseEntity<Cart> updateCart(@Valid @RequestBody CartDto cart, @PathVariable Long cartId) {
 //        return ResponseEntity.ok(cartService.update(cart, cartId));
 
 
+
+
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/me")
+    @ResponseBody
     public ResponseEntity<?> clearCart () {
         cartService.clearCart();
         return ResponseEntity.noContent().build();
