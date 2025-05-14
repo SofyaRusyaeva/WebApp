@@ -52,9 +52,10 @@ public class CartItemService {
             throw new ObjectNotFoundException("You don't have cart item with id: " + id);
         if (increase)
             oldCartItem.setQuantity(oldCartItem.getQuantity() + 1);
-        else
-            if (oldCartItem.getQuantity() > 0)
+        else {
+            if (oldCartItem.getQuantity() > 1)
                 oldCartItem.setQuantity(oldCartItem.getQuantity() - 1);
+        }
 
         return cartItemRepository.save(oldCartItem);
     }

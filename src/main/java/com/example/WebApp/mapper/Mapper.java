@@ -72,6 +72,7 @@ public class Mapper {
 
     public ItemResponseDto toCartItemResponse(CartItem cartItem) {
         ItemResponseDto cartItemResponseDto = new ItemResponseDto();
+        cartItemResponseDto.setItemId(cartItem.getCartItemId());
         cartItemResponseDto.setQuantity(cartItem.getQuantity());
         Product product = cartItem.getProduct();
         cartItemResponseDto.setProductName(product.getName());

@@ -14,36 +14,136 @@
 
 <h1>Корзина</h1>
 
-
 <hr>
-
 
 <div>
     <div th:if="${cart != null and not cart.cartItems.empty}">
         <div class="cart-grid">
             <div class="cart-item-card" th:each="cartItem : ${cart.cartItems}">
-                <h2><strong>Название</strong> <span th:text="${cartItem.productName}"></span></h2>
+                <h2><strong></strong> <span th:text="${cartItem.productName}"></span></h2>
                 <p><strong>Количество</strong> <span th:text="${cartItem.quantity}"></span></p>
                 <p><strong>Цена</strong> <span th:text="${cartItem.totalPrice}"></span></p>
+                <div class = "cart-item-actions">
+                    <button th:attr="onclick=${'increase(' + cartItem.itemId + ')'}" class="btn btn-primary">+</button>
+                    <button th:attr="onclick=${'decrease(' + cartItem.itemId + ')'}" class="btn btn-primary">-</button>
+                    <button th:attr="onclick=${'del(' + cartItem.itemId + ')'}" class="btn btn-danger">delete</button>
+                </div>
             </div>
         </div>
         <div><h2>Итого: <span th:text="${cart.totalPrice}"></span></h2></div>
+
+
+        <div class="cart-actions">
+            <button onclick="clearCart()" class="btn btn-danger">Очистить корзину</button>
+            <button onclick="createOrder()" class="btn btn-primary">Оформить заказ</button>
+        </div>
+
     </div>
     <div th:if="${cart == null or cart.cartItems.empty}">
         <h2>Корзина пуста</h2>
     </div>
 </div>
 
+<script>
+    function createOrder() {
+        if (confirm('Оформить заказ?')) {
+            fetch('/api/shop/cart/createOrder', {
+            method: 'POST',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+      }
+  }
 
+    function clearCart() {
+        if (confirm('Очистить корзину?')) {
+            fetch('/api/shop/cart/me', {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+      }
+    }
 
+    function increase(cartItemId) {
+    fetch('/api/shop/cartItem/' + cartItemId + '/inc', {
+            method: 'PUT',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+    }
 
-<!--<script>-->
+    function decrease(cartItemId) {
+        fetch('/api/shop/cartItem/' + cartItemId + '/dec', {
+            method: 'PUT',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+    }
 
-
-<!--</script>-->
-
-
-
+    function del(cartItemId) {
+        fetch('/api/shop/cartItem/' + cartItemId, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          })
+          .then(async response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              const err = await response.json().catch(() => ({}));
+              alert('Ошибка: ' + (err.message || response.status));
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Произошла сетевая ошибка');
+          });
+    }
+</script>
 
 </body>
 </html>

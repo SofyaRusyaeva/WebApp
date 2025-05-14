@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Заказы</title>
+  <th:block th:insert="~{header :: head}"></th:block>
+
+
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<th:block th:insert="~{header :: nav}"></th:block>
+
+
+<h1>Заказы</h1>
+
+<hr>
+
+<div>
+  <div th:if="${orders != null and not orders.empty}">
+    <div class="orders-grid">
+      <div class="order-card" th:each="order : ${orders}">
+        <p><strong>Дата заказа</strong> <span th:text="${order.date}"></span></p>
+        <p><strong>Статус заказа</strong> <span th:text="${order.status}"></span></p>
+        <p><strong>Стоимость</strong> <span th:text="${order.totalPrice}"></span></p>
+        <div class = "order-actions">
+          <button th:attr="onclick=${'info(' + order.orderId + ')'}" class="btn btn-primary">Подробнее</button>
+        </div>
+
+      </div>
+    </div>
+    <div><h2>Итого: <span th:text="${cart.totalPrice}"></span></h2></div>
+
+
+    <div class="cart-actions">
+      <button onclick="clearCart()" class="btn btn-danger">Очистить корзину</button>
+      <button onclick="createOrder()" class="btn btn-primary">Оформить заказ</button>
+    </div>
+
+  </div>
+  <div th:if="${orders == null or orders.empty}">
+    <h2>Нет заказов</h2>
+  </div>
+</div>
+
+<script>
+  function info() {
+
+  }
+</script>
+
+</body>
+</html>

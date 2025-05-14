@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemResponseDto {
+    Long itemId;
     String productName;
     Long quantity;
     BigDecimal totalPrice;

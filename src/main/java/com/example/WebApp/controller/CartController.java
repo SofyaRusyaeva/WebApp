@@ -28,31 +28,22 @@ import java.util.List;
 @RequestMapping("/api/shop/cart")
 public class CartController {
 
-
     CartService cartService;
-
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/createOrder")
     @ResponseBody
-    public ResponseEntity<Orders> createOrderFromCart() {
+    public void createOrderFromCart() {
         Orders order = cartService.createOrderFromCart();
-        return ResponseEntity.ok(order);
     }
 
 
-//    @PostMapping()
-//    public ResponseEntity<Cart> addCart(@Valid @RequestBody CartDto cart) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.save(cart));
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping()
+//    @ResponseBody
+//    public ResponseEntity<List<Cart>> getCarts() {
+//        return ResponseEntity.ok(cartService.findAll());
 //    }
-
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping()
-    @ResponseBody
-    public ResponseEntity<List<Cart>> getCarts() {
-        return ResponseEntity.ok(cartService.findAll());
-    }
 
 
     @PreAuthorize("hasRole('USER')")
@@ -63,26 +54,18 @@ public class CartController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{userId}")
-    @ResponseBody
-    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
-        return ResponseEntity.ok(cartService.findByUserId(userId));
-    }
-
-
-//    @PutMapping("/{cartId}")
-//    public ResponseEntity<Cart> updateCart(@Valid @RequestBody CartDto cart, @PathVariable Long cartId) {
-//        return ResponseEntity.ok(cartService.update(cart, cartId));
-
-
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/{userId}")
+//    @ResponseBody
+//    public ResponseEntity<Cart> getUserCart(@PathVariable Long userId) {
+//        return ResponseEntity.ok(cartService.findByUserId(userId));
+//    }
 
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/me")
     @ResponseBody
-    public ResponseEntity<?> clearCart () {
+    public void clearCart () {
         cartService.clearCart();
-        return ResponseEntity.noContent().build();
     }
 }

@@ -50,7 +50,7 @@ public class CartService {
         Long userId= jwtProvider.getCurrentUserId();
         Cart cart = cartRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Cart not found"));
-        List<ItemResponseDto> items = cartItemRepository.findByCart_CartId(cart.getCartId()).stream()
+        List<ItemResponseDto> items = cartItemRepository.findByCart_CartIdOrderByCartItemIdAsc(cart.getCartId()).stream()
                 .map(mapper::toCartItemResponse)
                 .collect(Collectors.toList());
         return new CartDto(cart.getTotalPrice(), items);

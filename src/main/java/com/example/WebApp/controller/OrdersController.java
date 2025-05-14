@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/shop/orders")
 public class OrdersController {
@@ -41,8 +43,9 @@ public class OrdersController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
-    public ResponseEntity<List<Orders>> getUserOrders() {
-        return ResponseEntity.ok(ordersService.findByUserId());
+    public String getUserOrders(Model model) {
+        model.addAttribute("orders", ordersService.findByUserId());
+        return "orders";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
