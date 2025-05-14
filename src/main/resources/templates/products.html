@@ -76,24 +76,36 @@
                 </select>
             </div>
 
-            <div>
-                <label for="categories" class="form-label">Категория:</label>
-                <select name="categories" id="categories" class="form-select" multiple size="2">
-                    <option th:each="category : ${categories}"
-                            th:value="${category}"
-                            th:text="${category}">
-                    </option>
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Категории:</label>
+                <div style="border: 1px solid #dee2e6; border-radius: 0.25rem; padding: 0.5rem; max-height: 100px; overflow-y: auto;">
+                    <div th:each="category : ${T(com.example.WebApp.model.ProductCategory).values()}" class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'category_' + category}"
+                               th:value="${category}"
+                               name="categories">
+                        <label class="form-check-label"
+                               th:for="${'category_' + category}"
+                               th:text="${category}"></label>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label for="brandNames" class="form-label">Бренд:</label>
-                <select name="brandNames" id="brandNames" class="form-select" multiple size="2">
-                    <option th:each="brand : ${brands}"
-                            th:value="${brand.name}"
-                            th:text="${brand.name}">
-                    </option>
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Бренды:</label>
+                <div style="border: 1px solid #dee2e6; border-radius: 0.25rem; padding: 0.5rem; max-height: 100px; overflow-y: auto;">
+                    <div th:each="brand : ${brands}" class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'brand_' + brand.name}"
+                               th:value="${brand.name}"
+                               name="brandNames">
+                        <label class="form-check-label"
+                               th:for="${'brand_' + brand.name}"
+                               th:text="${brand.name}"></label>
+                    </div>
+                </div>
             </div>
 
             <div>

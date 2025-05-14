@@ -77,14 +77,20 @@
                 </select>
             </div>
 
-            <div>
-                <label for="statuses" class="form-label">Статус заказа:</label>
-                <select name="statuses" id="statuses" class="form-select" multiple size="2">
-                    <option th:each="status : ${T(com.example.WebApp.model.OrderStatus).values()}"
-                            th:value="${status}"
-                            th:text="${status}">
-                    </option>
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Статусы заказов:</label>
+                <div style="border: 1px solid #dee2e6; border-radius: 0.25rem; padding: 0.5rem; max-height: 100px; overflow-y: auto;">
+                    <div th:each="status : ${T(com.example.WebApp.model.OrderStatus).values()}" class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'status_' + status}"
+                               th:value="${status}"
+                               name="statuses">
+                        <label class="form-check-label"
+                               th:for="${'status_' + status}"
+                               th:text="${status}"></label>
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -111,59 +117,64 @@
         </form>
     </div>
 
-    <div>
-        <div th:if="${orders != null and not orders.empty}">
-            <div class="orders-grid">
-                <div class="order-card" th:each="order : ${orders}">
-                    <p><strong>Дата заказа</strong> <span th:text="${order.date}"></span></p>
-                    <div>
-                        <p><strong>Статус заказа</strong> <span th:text="${order.status}"></span></p>
+    <div th:if="${orders != null and not orders.empty}" class="orders-container">
+        <div th:each="order : ${orders}" class="order-card mb-4 pb-3 pt-3" style="border-top: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Заказ #<span th:text="${order.orderId}"></span></h4>
+                    <p><strong>Дата заказа:</strong> <span th:text="${order.date}"></span></p>
+                    <p><strong>Статус:</strong> <span th:text="${order.status}"></span></p>
+                    <p><strong>Стоимость:</strong> <span th:text="${order.totalPrice}"></span></p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary"
+                            th:attr="onclick=|toggleOrderDetails(${order.orderId})|">
+                        <i class="bi bi-list-ul"></i> Подробнее
+                    </button>
+                    <button class="btn btn-outline-secondary"
+                            th:onclick="'toggleEditForm(' + ${order.orderId} + ')'">
+                        <i class="bi bi-pencil"></i> Редактировать
+                    </button>
+                </div>
+            </div>
+
+            <div th:attr="id=|order-details-${order.orderId}|" style="display: none; margin-top: 10px;">
+                <!-- Здесь будут детали заказа -->
+            </div>
+
+            <div th:id="'edit-form-' + ${order.orderId}" class="edit-form mt-3" style="display: none;">
+                <h5 class="mb-3">Изменение статуса заказа</h5>
+                <form th:id="'edit-order-form-' + ${order.orderId}">
+                    <input type="hidden" name="orderId" th:value="${order.orderId}">
+
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Новый статус:</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option th:each="status : ${T(com.example.WebApp.model.OrderStatus).values()}"
+                                    th:value="${status}"
+                                    th:selected="${status == order.status}"
+                                    th:text="${status}">
+                            </option>
+                        </select>
                     </div>
-                    <p><strong>Стоимость</strong> <span th:text="${order.totalPrice}"></span></p>
-                    <div class="order-actions">
-                        <button type="button"
-                                class="btn btn-outline-primary"
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary"
+                                th:onclick="'updateOrderStatus(' + ${order.orderId} + ')'">
+                            <i class="bi bi-check-circle"></i> Сохранить
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary"
                                 th:onclick="'toggleEditForm(' + ${order.orderId} + ')'">
-                            Редактировать
+                            <i class="bi bi-x-circle"></i> Отмена
                         </button>
                     </div>
-                    <div th:attr="id=|order-details-${order.orderId}|" style="display: none; margin-top: 10px;"></div>
-
-                    <div th:id="'edit-form-' + ${order.orderId}" class="edit-form form-container mt-3"
-                         style="display: none;">
-                        <h4 class="mb-3">Изменение статуса заказа</h4>
-                        <form th:id="'edit-order-form-' + ${order.orderId}">
-                            <input type="hidden" name="orderId" th:value="${order.orderId}">
-
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Новый статус:</label>
-                                <select class="form-select" id="status" name="status" required>
-                                    <option th:each="status : ${T(com.example.WebApp.model.OrderStatus).values()}"
-                                            th:value="${status}"
-                                            th:selected="${status == order.status}"
-                                            th:text="${status}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary"
-                                        th:onclick="'updateOrderStatus(' + ${order.orderId} + ')'">
-                                    Сохранить
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary"
-                                        th:onclick="'toggleEditForm(' + ${order.orderId} + ')'">
-                                    Отмена
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
-    <div th:if="${orders == null or orders.empty}">
-        <h2>Нет заказов</h2>
+
+    <div th:if="${orders == null or orders.empty}" class="orders-container">
+        <h4 class="text-center text-muted">Нет заказов</h4>
     </div>
 </div>
 
