@@ -1,5 +1,6 @@
 package com.example.WebApp.exeption;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,8 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
+    /// /////////////////////
+
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
 //                )
 //        );
 //    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
@@ -77,15 +81,38 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ModelAndView handleNoResourceFoundException(NoResourceFoundException e) {
-        ModelAndView modelAndView = new ModelAndView("/api/shop/error404");
+        ModelAndView modelAndView = new ModelAndView("error404");
         modelAndView.addObject("message", "Страница или ресурс не найден");
         return modelAndView;
     }
 
 
+//@ExceptionHandler(NoResourceFoundException.class)
+//public ResponseEntity<Map<String, String>> handleNoResourceFound(NoResourceFoundException ex) {
+//    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//            Map.of(
+//                    "error", "Not Found",
+//                    "message", "Ресурс не найден: " + ex.getResourcePath()
+//            )
+//    );
+//}
 
+
+//    @ExceptionHandler({AccessException.class, AccessDeniedException.class})
+//    public ResponseEntity<Map<String, Object>> handleAccessException(Exception e) {
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+//                Map.of(
+//                        "status", HttpStatus.FORBIDDEN.value(),
+//                        "message", "You can't view this page"
+//                )
+//        );
+//    }
+
+    /// /////////////////////
 
 
     @ExceptionHandler({NoHandlerFoundException.class, MethodArgumentTypeMismatchException.class, HttpRequestMethodNotSupportedException.class})

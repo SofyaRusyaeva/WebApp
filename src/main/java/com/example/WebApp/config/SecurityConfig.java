@@ -44,9 +44,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-//                                .requestMatchers("/**").permitAll()
-                        .requestMatchers("/403","/api/auth/**").permitAll()
-                        .requestMatchers("/", "/register", "/login", "/api/auth/**", "/css/**", "/images/**",  "/static/**").permitAll()
+                                .requestMatchers("api/auth/error403", "/", "/register", "/login", "/api/auth/**", "/css/**", "/images/**",  "/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -55,17 +53,9 @@ public class SecurityConfig {
         http.exceptionHandling(e -> e
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.sendRedirect("/api/auth/login");
-                    //                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//                    response.getWriter().write("{\"status\": 401, \"message\": \"Authentication required\"}");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-//                    response.sendRedirect("/api/auth/login");
                     response.sendRedirect("/api/shop/error403");
-
-//                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//                    response.setStatus(HttpStatus.FORBIDDEN.value());
-//                    response.getWriter().write("{\"status\": 403, \"message\": \"Access denied\"}");
                 })
         );
         return http.build();
