@@ -274,6 +274,58 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('sortBy')) {
+        document.getElementById('sortBy').value = urlParams.get('sortBy');
+    }
+    if (urlParams.has('sortDirection')) {
+        document.getElementById('sortDirection').value = urlParams.get('sortDirection');
+    }
+
+    const selectedCategories = urlParams.getAll('categories');
+    document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
+        if (selectedCategories.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+
+    const selectedBrands = urlParams.getAll('brandNames');
+    document.querySelectorAll('input[name="brandNames"]').forEach(checkbox => {
+        if (selectedBrands.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+
+    if (urlParams.has('minPrice')) {
+        document.getElementById('minPrice').value = urlParams.get('minPrice');
+    }
+    if (urlParams.has('maxPrice')) {
+        document.getElementById('maxPrice').value = urlParams.get('maxPrice');
+    }
+
+    document.getElementById('filter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const params = new URLSearchParams(formData);
+
+        history.pushState(null, '', '?' + params.toString());
+
+        fetch(window.location.pathname + '?' + params.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            document.querySelector('.product-grid').innerHTML = doc.querySelector('.product-grid').innerHTML;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
     function addToCart(productId) {
       fetch('/api/shop/products/' + productId, {
         method: 'POST',
