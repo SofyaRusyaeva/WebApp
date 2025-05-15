@@ -50,6 +50,11 @@
             margin: 1rem 0;
             border: 1px solid #000000;
         }
+        .product-image img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        }
     </style>
 </head>
 <body>
@@ -205,7 +210,7 @@
             </div>
 
             <div class="product-image">
-                <span class="text-muted">Изображение товара</span>
+                <img th:src="@{/images/product{productId}.jpg(productId=${product.id})}" alt="Изображение товара" class="img-fluid">
             </div>
 
             <div class="card-body">

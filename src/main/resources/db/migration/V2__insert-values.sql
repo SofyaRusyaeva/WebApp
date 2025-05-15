@@ -6,13 +6,16 @@ INSERT INTO brand (name, country) VALUES ('Loreal', 'France');
 INSERT INTO brand (name, country) VALUES ('Art Visage', 'Russia');
 INSERT INTO brand (name, country) VALUES ('Holika holika', 'Korea');
 INSERT INTO brand (name, country) VALUES ('Tom Ford', 'USA');
+INSERT INTO brand (name, country) VALUES ('Rad', 'USA');
 
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('lipstick', 'matt', 'makeup', 1, 2000);
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('cream', 'hand cream', 'skincare', 2, 300);
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('mascara', 'waterproof', 'makeup', 1, 1700);
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('eyeliner', 'blue neon', 'makeup', 3, 500);
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('cream', 'spf', 'sun_care', 4, 1800);
-INSERT INTO product (name, description, category, brand_id, price) VALUES ('Lost cherry', 'sweet', 'perfume', 5, 31500);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Almost lipstick', 'Black Honey', 'makeup', 1, 2000);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Vitamino Color', 'Shampoo for colored hair, 300 мл', 'haircare', 2, 1170);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Lash Power Mascara', 'Dark Chocolate', 'makeup', 1, 1700);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Eyeshadow palette', 'Cool Universe', 'makeup', 3, 1100);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Waterproof Sun Cream', 'Aloe SPF50+/ РА ++++ 70 мл', 'sun_care', 4, 1800);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Lost cherry', 'Sweetness. The temptation. 50 мл', 'perfume', 5, 31500);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Miracle Touch', 'Оттенок 101, золотисто-бежевый', 'makeup', 3, 230);
+INSERT INTO product (name, description, category, brand_id, price) VALUES ('Eye Eye Eye! Vinyl Eyeliner', 'Оттенок 004, Acid blue', 'makeup', 6, 450);
 
 INSERT INTO cart (total_price, user_id) VALUES (0, 1);
 INSERT INTO cart (total_price, user_id) VALUES (0, 2);
