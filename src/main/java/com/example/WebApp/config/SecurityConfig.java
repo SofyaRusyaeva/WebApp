@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 //                                .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/403","/api/auth/**").permitAll()
                         .requestMatchers("/", "/register", "/login", "/api/auth/**", "/css/**", "/images/**",  "/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -54,14 +54,18 @@ public class SecurityConfig {
 
         http.exceptionHandling(e -> e
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("{\"status\": 401, \"message\": \"Authentication required\"}");
+                    response.sendRedirect("/api/auth/login");
+                    //                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//                    response.getWriter().write("{\"status\": 401, \"message\": \"Authentication required\"}");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    response.getWriter().write("{\"status\": 403, \"message\": \"Access denied\"}");
+//                    response.sendRedirect("/api/auth/login");
+                    response.sendRedirect("/api/shop/error403");
+
+//                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                    response.setStatus(HttpStatus.FORBIDDEN.value());
+//                    response.getWriter().write("{\"status\": 403, \"message\": \"Access denied\"}");
                 })
         );
         return http.build();

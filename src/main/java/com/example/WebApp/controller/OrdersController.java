@@ -63,13 +63,6 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.findByOrderIdAndUserId(orderId));
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @PatchMapping("/{ordersId}")
-//    @ResponseBody
-//    public ResponseEntity<Orders> updateOrders(@RequestBody @NotNull OrderStatus status, @PathVariable Long ordersId) {
-//        return ResponseEntity.ok(ordersService.update(status, ordersId));
-//    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> updateOrderStatus(

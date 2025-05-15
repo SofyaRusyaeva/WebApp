@@ -19,7 +19,7 @@ public class ViewController {
         return "register";
     }
 
-    @GetMapping("/")
+    @GetMapping("/api/shop/home")
     public String homePage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
             model.addAttribute("username", userDetails.getUsername());

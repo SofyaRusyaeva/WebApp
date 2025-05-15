@@ -43,6 +43,18 @@ public class OrdersService {
         if ("desc".equalsIgnoreCase(sortDirection))
             sort = Sort.by(Sort.Direction.DESC, sortBy);
 
+        if (maxPrice == null && minPrice != null)
+            maxPrice = new BigDecimal("1000000");
+        if (minPrice == null && maxPrice != null)
+            minPrice = BigDecimal.ZERO;
+
+        if (endDate == null && startDate != null)
+            startDate = LocalDate.now();
+
+        if (startDate == null && endDate != null)
+            endDate = LocalDate.of(2000, 1, 1);
+
+
         if(statuses != null && !statuses.isEmpty() && startDate != null && endDate != null && minPrice != null && maxPrice != null)
             return ordersRepository.findByTotalPriceBetweenAndDateBetweenAndStatusIn(minPrice, maxPrice, startDate, endDate, statuses, sort);
         if (statuses != null && !statuses.isEmpty() && startDate != null && endDate != null)

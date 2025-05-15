@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.rmi.AccessException;
 import java.util.Map;
@@ -49,8 +50,25 @@ public class GlobalExceptionHandler {
     }
 
 
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                Map.of(
+//                        "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                        "message", e.getMessage(),
+//                        "class", e.getClass()
+//                )
+//        );
+//    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
+        // Пропускаем исключения безопасности, чтобы сработал accessDeniedHandler
+        if (e instanceof org.springframework.security.core.AuthenticationException ||
+                e instanceof org.springframework.security.access.AccessDeniedException) {
+            throw (RuntimeException) e;
+        }
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 Map.of(
                         "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -59,6 +77,16 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ModelAndView handleNoResourceFoundException(NoResourceFoundException e) {
+        ModelAndView modelAndView = new ModelAndView("/api/shop/error404");
+        modelAndView.addObject("message", "Страница или ресурс не найден");
+        return modelAndView;
+    }
+
+
+
+
 
     @ExceptionHandler({NoHandlerFoundException.class, MethodArgumentTypeMismatchException.class, HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<Map<String, Object>> handleNoHandlerFoundException(Exception e) {
@@ -77,16 +105,6 @@ public class GlobalExceptionHandler {
                 Map.of(
                         "status", HttpStatus.UNAUTHORIZED.value(),
                         "message", e.getMessage()
-                )
-        );
-    }
-
-    @ExceptionHandler({AccessException.class, AccessDeniedException.class})
-    public ResponseEntity<Map<String, Object>> handleAccessException(Exception e){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                Map.of(
-                        "status", HttpStatus.FORBIDDEN.value(),
-                        "message", "You can't view this page"
                 )
         );
     }

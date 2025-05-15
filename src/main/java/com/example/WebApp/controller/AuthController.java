@@ -62,7 +62,7 @@ public class AuthController {
         refreshCookie.setHttpOnly(true);
         refreshCookie.setPath("/");
         response.addCookie(refreshCookie);
-        return "redirect:/";
+        return "redirect:/api/shop/home";
     }
 
 
@@ -84,7 +84,7 @@ public class AuthController {
         refreshCookie.setPath("/");
         response.addCookie(refreshCookie);
 
-        return "redirect:/";
+        return "redirect:/api/shop/home";
     }
 
 

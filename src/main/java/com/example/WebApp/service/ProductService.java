@@ -45,6 +45,12 @@ public class ProductService {
 
         List<Product> products;
         Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+
+        if (maxPrice == null && minPrice != null)
+            maxPrice = new BigDecimal("1000000");
+        if (minPrice == null && maxPrice != null)
+            minPrice = BigDecimal.ZERO;
+
         if ("desc".equalsIgnoreCase(sortDirection))
             sort = Sort.by(Sort.Direction.DESC, sortBy);
 
