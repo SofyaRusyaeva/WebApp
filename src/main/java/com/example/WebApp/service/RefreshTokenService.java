@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +32,11 @@ public class RefreshTokenService {
     final RefreshTokenRepository refreshTokenRepository;
     final JwtProvider jwtProvider;
     final CustomUserDetailsService userDetailsService;
+    final UsersRepository usersRepository;
+
+    @Value("${jwt.refresh-expiration}")
+    @NonFinal
+    private long refreshExpiration;
 
     @Transactional
     public JwtResponseDto refresh(RefreshTokenDto refreshTokenDto) {
@@ -42,6 +48,13 @@ public class RefreshTokenService {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(existingToken.getUser().getEmail());
                     String refreshToken = jwtProvider.generateRefreshToken(existingToken.getUser().getEmail());
                     String accessToken = jwtProvider.generateAccessToken(userDetails, existingToken.getUser().getUserId());
+
+
+                    Users user = usersRepository.findByEmail(userDetails.getUsername())
+                            .orElseThrow(() -> new ObjectNotFoundException("User not found"));
+                    refreshTokenRepository.save(new RefreshToken(null, refreshToken, user, Instant.now().plusMillis(refreshExpiration)));
+
+
                     return new JwtResponseDto(accessToken, refreshToken);
                 })
                 .orElseThrow(() -> new ObjectNotFoundException("Refresh token not found"));

@@ -52,17 +52,19 @@ public class AuthController {
         UsersDto userDto = new UsersDto(username, email, password, phone);
         authService.save(userDto);
         JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+
         Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+
+        Cookie refreshCookie = new Cookie("refresh_token", jwt.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
         return "redirect:/";
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String > login(@RequestBody AuthDto authDto) {
-//        return ResponseEntity.ok(authService.authenticate(authDto).getAccessToken());
-//    }
 
     @PostMapping("/login")
     public String loginFromForm(
@@ -71,10 +73,17 @@ public class AuthController {
             HttpServletResponse response
     ) {
         JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+
         Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+
+        Cookie refreshCookie = new Cookie("refresh_token", jwt.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
         return "redirect:/";
     }
 
@@ -112,15 +121,18 @@ public class AuthController {
             blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
         }
 
-        // Удаляем куки
         Cookie cookie = new Cookie("access_token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0); // Удаляем куки
         response.addCookie(cookie);
 
+        Cookie refreshCookie = new Cookie("refresh_token", null);
+        refreshCookie.setPath("/");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0); // Удаляем куки
+        response.addCookie(refreshCookie);
+
         return "login";
     }
-
-
 }
