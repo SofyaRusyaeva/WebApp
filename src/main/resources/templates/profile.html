@@ -1,59 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <title>Профиль пользователя</title>-->
-<!--    <th:block th:insert="~{header :: head}"></th:block>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css" rel="stylesheet">-->
-<!--</head>-->
-<!--<body>-->
-<!--<th:block th:insert="~{header :: nav}"></th:block>-->
-
-<!--<div class="container mt-5">-->
-<!--    <h1 class="mb-4">Профиль</h1>-->
-
-<!--    <div class="user-card">-->
-<!--        <ul class="list-group list-group-flush mb-3">-->
-<!--            <li class="list-group-item"><strong>Имя пользователя:</strong> <span th:text="${user.userName}">email</span></li>-->
-<!--            <li class="list-group-item"><strong>Почта:</strong> <span th:text="${user.email}">email</span></li>-->
-<!--            <li class="list-group-item"><strong>Телефон:</strong> <span th:text="${user.phone}">Телефон</span></li>-->
-<!--        </ul>-->
-<!--    </div>-->
-
-<!--    <div>-->
-<!--        <button type="button"-->
-<!--                class="btn btn-outline-danger"-->
-<!--                th:attr="onclick=${'deleteUser()'}">-->
-<!--            Удалить-->
-<!--        </button>-->
-<!--    </div>-->
-
-<!--</div>-->
-
-<!--<script>-->
-<!--    function deleteUser() {-->
-<!--        if (confirm('Вы уверены, что хотите удалить профиль?')) {-->
-<!--            fetch('/api/shop/users/me', {-->
-<!--                method: 'DELETE',-->
-<!--                credentials: 'same-origin'-->
-<!--            })-->
-<!--            .then(response => {-->
-<!--                if (response.ok || response.status === 204) {-->
-<!--                    window.location.href = '/api/auth/login';-->
-<!--                } else {-->
-<!--                    alert('Ошибка при удалении аккаунта');-->
-<!--                }-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Ошибка:', error);-->
-<!--                alert('Сетевая ошибка');-->
-<!--            });-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -102,7 +46,6 @@
         </button>
     </div>
 
-    <!-- Edit Profile Form -->
     <div class="form-container" id="edit-form" style="display: none;">
         <h3 class="mb-3">Редактирование профиля</h3>
         <form id="edit-profile-form">
@@ -111,10 +54,6 @@
                 <input type="text" class="form-control" id="userName" name="userName" th:value="${user.userName}">
             </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Почта:</label>
-                <input type="email" class="form-control" id="email" name="email" th:value="${user.email}">
-            </div>
 
             <div class="mb-3">
                 <label for="phone" class="form-label">Телефон:</label>
@@ -128,7 +67,6 @@
         </form>
     </div>
 
-    <!-- Change Password Form -->
     <div class="form-container password-form-container" id="password-form" style="display: none;">
         <h3 class="mb-3">Изменение пароля</h3>
         <form id="change-password-form">
@@ -200,10 +138,23 @@
     function saveProfile() {
     const form = document.getElementById('edit-profile-form');
 
+    const userName = form.userName.value.trim();
+    const phone = form.phone.value.trim();
+
+    if (!userName) {
+        alert('Имя пользователя не может быть пустым.');
+        return;
+    }
+
+    const phoneRegex = /^\+7\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+        alert('Телефон должен быть в формате +79999999999 (10 цифр после +7).');
+        return;
+    }
+
     const userData = {
-        userName: form.userName.value,
-        email: form.email.value,
-        phone: form.phone.value
+        userName: userName,
+        phone: phone
     };
 
     fetch('/api/shop/users/me/edit', {
@@ -217,7 +168,7 @@
     .then(async response => {
         if (response.ok) {
             alert('Профиль успешно обновлен!');
-            location.reload(); // Перезагружаем страницу для отображения новых данных
+            location.reload();
         } else {
             const errorData = await response.json();
             alert(`Ошибка: ${errorData.message || 'Неизвестная ошибка'}`);
@@ -228,6 +179,7 @@
         alert('Сетевая ошибка при обновлении профиля');
     });
 }
+
 
     function savePassword() {
         const form = document.getElementById('change-password-form');

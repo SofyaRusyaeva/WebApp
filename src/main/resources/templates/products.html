@@ -377,34 +377,49 @@
     }
 
     function saveProduct(productId) {
-        const form = document.getElementById('edit-product-form-' + productId);
+    const form = document.getElementById('edit-product-form-' + productId);
 
-        const params = new URLSearchParams();
-        params.append('name', form.name.value);
-        params.append('description', form.description.value);
-        params.append('price', form.price.value);
+    const name = form.name.value.trim();
+    const description = form.description.value.trim();
+    const price = parseFloat(form.price.value);
 
-        fetch(`/api/shop/products/${productId}?${params.toString()}`, {
-            method: 'PUT',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(async response => {
-            if (response.ok) {
-                alert('Товар успешно изменен!');
-                location.reload();
-            } else {
-                const err = await response.json().catch(() => ({}));
-                alert('Ошибка: ' + (err.message || response.status));
-            }
-        })
-        .catch(e => {
-            console.error(e);
-            alert('Произошла сетевая ошибка');
-        });
+    if (!name) {
+        alert('Название товара не может быть пустым.');
+        return;
     }
+
+    if (isNaN(price) || price < 0) {
+        alert('Цена должна быть числом больше или равным 0.');
+        return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('name', name);
+    params.append('description', description);
+    params.append('price', price);
+
+    fetch(`/api/shop/products/${productId}?${params.toString()}`, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(async response => {
+        if (response.ok) {
+            alert('Товар успешно изменен!');
+            location.reload();
+        } else {
+            const err = await response.json().catch(() => ({}));
+            alert('Ошибка: ' + (err.message || response.status));
+        }
+    })
+    .catch(e => {
+        console.error(e);
+        alert('Произошла сетевая ошибка');
+    });
+}
+
 
     function toggleCreateForm() {
             const form = document.getElementById('create-form');

@@ -40,15 +40,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-//    @ExceptionHandler(DuplicateException.class)
-//    public ResponseEntity<Map<String, Object>> handleDuplicateBrandException(DuplicateException e) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-//                Map.of(
-//                        "status", HttpStatus.BAD_REQUEST.value(),
-//                        "message", e.getMessage()
-//                )
-//        );
-//    }
 
     @ExceptionHandler(DuplicateException.class)
     public ModelAndView handleDuplicateBrandException(DuplicateException e) {
@@ -79,15 +70,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-//    @ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class}) //, BadCredentialsException.class
-//    public ResponseEntity<Map<String, Object>> handleEnumConversionError(Exception e) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-//                Map.of(
-//                        "status", HttpStatus.BAD_REQUEST.value(),
-//                        "message", "Некорректные данные"
-//                )
-//        );
-//    }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException e) {
@@ -124,25 +106,4 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
-
-
-//    @ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class})
-//    public ModelAndView handleConstraintViolationException(Exception e) {
-//        ModelAndView modelAndView = new ModelAndView("register");
-//
-//        if (e instanceof ConstraintViolationException) {
-//            // Собираем все сообщения об ошибках в одну строку с полями, для более читабельного отображения
-//            String errorMessages = ((ConstraintViolationException) e).getConstraintViolations().stream()
-//                    .map(violation -> {
-//                        String property = violation.getPropertyPath().toString(); // Имя поля
-//                        String message = violation.getMessage(); // Сообщение ошибки
-//                        return "Ошибка в поле '" + property + "': " + message; // Форматируем ошибку
-//                    })
-//                    .collect(Collectors.joining("<br>")); // Объединяем ошибки в одну строку с переносом
-//
-//            modelAndView.addObject("error", errorMessages);
-//        } else {
-//            modelAndView.addObject("error", "Произошла ошибка: " + e.getMessage());
-//        }        return modelAndView;
-//    }
 }

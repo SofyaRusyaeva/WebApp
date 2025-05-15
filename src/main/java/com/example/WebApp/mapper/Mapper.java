@@ -28,12 +28,6 @@ public class Mapper {
         return brand;
     }
 
-//    public Cart toCart(CartDto dto, Users user) {
-//        Cart cart = new Cart();
-//        cart.setUser(user);
-//        cart.setTotalPrice(dto.getTotalPrice());
-//        return cart;
-//    }
 
     public Orders toOrders(OrdersDto dto, Users user) {
         Orders order = new Orders();
@@ -43,22 +37,6 @@ public class Mapper {
         order.setTotalPrice(dto.getTotalPrice());
         return order;
     }
-
-//    public CartItem toCartItem(CartItemDto dto, Cart cart, Product product) {
-//        CartItem cartItem = new CartItem();
-//        cartItem.setCart(cart);
-//        cartItem.setProduct(product);
-//        cartItem.setQuantity(dto.getQuantity());
-//        return cartItem;
-//    }
-
-//    public OrderItem toOrderItem(OrderItemDto dto, Orders order, Product product) {
-//        OrderItem orderItem = new OrderItem();
-//        orderItem.setOrder(order);
-//        orderItem.setProduct(product);
-//        orderItem.setQuantity(dto.getQuantity());
-//        return orderItem;
-//    }
 
     public Users toUsers(UsersDto dto) {
         Users user = new Users();

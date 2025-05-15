@@ -44,12 +44,6 @@ public class UsersController {
         return "profile";
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @GetMapping("/{userId}")
-//    public  ResponseEntity<Users> getUserById(@PathVariable Long userId) {
-//        return ResponseEntity.ok(usersService.findById(userId));
-//    }
-
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/me/edit")
     @ResponseBody
@@ -75,7 +69,7 @@ public class UsersController {
 
         Cookie cookie = new Cookie("access_token", null);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0); // удалить куку
+        cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
         return ResponseEntity.noContent().build();

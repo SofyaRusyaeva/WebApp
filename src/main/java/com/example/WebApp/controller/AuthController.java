@@ -93,25 +93,14 @@ public class AuthController {
         return ResponseEntity.ok(refreshTokenService.refresh(refreshTokenDto));
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
-//        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
-//                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
-//        refreshTokenService.delete(token);
-//
-//        String accessToken = authHeader.substring(7);
-//        blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
-//        return ResponseEntity.ok("Successful!");
-//    }
-
     @PostMapping("/logout")
     public String logout(
             HttpServletRequest request,
             HttpServletResponse response,
-            @CookieValue(name = "access_token", required = false) String accessToken
+            @CookieValue(name = "access_token", required = false) String accessToken,
+            @CookieValue(name = "refresh_token", required = false) String refreshToken
     ) {
 
-        String refreshToken = request.getParameter("refreshToken");
         if (refreshToken != null) {
             refreshTokenService.findByToken(refreshToken)
                     .ifPresent(refreshTokenService::delete);
@@ -124,13 +113,13 @@ public class AuthController {
         Cookie cookie = new Cookie("access_token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0); // Удаляем куки
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
 
         Cookie refreshCookie = new Cookie("refresh_token", null);
         refreshCookie.setPath("/");
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setMaxAge(0); // Удаляем куки
+        refreshCookie.setMaxAge(0);
         response.addCookie(refreshCookie);
 
         return "login";

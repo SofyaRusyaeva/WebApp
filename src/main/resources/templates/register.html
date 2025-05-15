@@ -10,14 +10,6 @@
     <p th:text="${error}"></p>
 </div>
 
-<!--<form th:action="@{/api/auth/register}" method="post">-->
-<!--    <label>Email*: <input type="text" name="email"/></label><br/>-->
-<!--    <label>Пароль*: <input type="password" name="password"/></label><br/>-->
-<!--    <label>Имя пользователя: <input type="text" name="username"/></label><br/>-->
-<!--    <label>Телефон: <input type="text" name="phone"/></label><br/>-->
-<!--    <button type="submit">Register</button>-->
-<!--</form>-->
-
 <div class="container mt-5">
     <form  th:action="@{/api/auth/register}" method="post" class="mx-auto" style="max-width: 400px;">
         <fieldset class="p-4 border rounded-3 bg-light shadow-sm">
@@ -37,8 +29,11 @@
                 <input type="text" name="username" class="form-control" id="exampleUserName" placeholder="Введите пароль" autocomplete="off" required>
             </div>
             <div class="mb-4">
-                <label for="exampleInputPassword1" class="form-label">Телефон</label>
-                <input type="text" name="phone" class="form-control" id="examplePhone" placeholder="Введите пароль" autocomplete="off" required>
+                <label for="examplePhone" class="form-label">Телефон</label>
+                <input type="text" name="phone" class="form-control" id="examplePhone"
+                       placeholder="+79999999999" autocomplete="off" required
+                       pattern="^\+7\d{10}$"
+                       title="Телефон должен быть в формате +79999999999">
             </div>
             <div class="d-grid gap-2 mb-3">
                 <button type="submit" class="btn btn-primary py-2">Зарегистрироваться</button>

@@ -20,16 +20,6 @@ public class CartItemController {
 
     CartItemService cartItemService;
 
-//    @GetMapping()
-//    public ResponseEntity<List<CartItem>> getCartItems() {
-//        return ResponseEntity.ok(cartItemService.findAll());
-//    }
-
-//    @PostMapping()
-//    public ResponseEntity<CartItem> addCartItem(@Valid @RequestBody CartItemDto cartItem) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(cartItemService.save(cartItem));
-//    }
-
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{cartItemId}/inc")
     public ResponseEntity<CartItem> increaseQuantity(@PathVariable Long cartItemId) {
