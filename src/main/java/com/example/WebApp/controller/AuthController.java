@@ -11,6 +11,7 @@ import com.example.WebApp.service.AuthService;
 import com.example.WebApp.service.BlackListService;
 import com.example.WebApp.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -51,17 +52,19 @@ public class AuthController {
         UsersDto userDto = new UsersDto(username, email, password, phone);
         authService.save(userDto);
         JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+
         Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+
+        Cookie refreshCookie = new Cookie("refresh_token", jwt.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
         return "redirect:/";
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String > login(@RequestBody AuthDto authDto) {
-//        return ResponseEntity.ok(authService.authenticate(authDto).getAccessToken());
-//    }
 
     @PostMapping("/login")
     public String loginFromForm(
@@ -70,10 +73,17 @@ public class AuthController {
             HttpServletResponse response
     ) {
         JwtResponseDto jwt = authService.authenticate(new AuthDto(email, password));
+
         Cookie cookie = new Cookie("access_token", jwt.getAccessToken());
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+
+        Cookie refreshCookie = new Cookie("refresh_token", jwt.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
         return "redirect:/";
     }
 
@@ -83,25 +93,46 @@ public class AuthController {
         return ResponseEntity.ok(refreshTokenService.refresh(refreshTokenDto));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
-        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
-                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
-        refreshTokenService.delete(token);
-
-        String accessToken = authHeader.substring(7);
-        blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
-        return ResponseEntity.ok("Successful!");
-    }
-
-
-//    @GetMapping("/login")
-//    public String loginPage() {
-//        return "login";
-//    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto,  @RequestHeader("Authorization") String authHeader) {
+//        RefreshToken token = refreshTokenService.findByToken(refreshTokenDto.getRefreshToken())
+//                .orElseThrow(() -> new ObjectNotFoundException("Token not found"));
+//        refreshTokenService.delete(token);
 //
-//    @GetMapping("/register")
-//    public String registerPage() {
-//        return "register";
+//        String accessToken = authHeader.substring(7);
+//        blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
+//        return ResponseEntity.ok("Successful!");
 //    }
+
+    @PostMapping("/logout")
+    public String logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @CookieValue(name = "access_token", required = false) String accessToken
+    ) {
+
+        String refreshToken = request.getParameter("refreshToken");
+        if (refreshToken != null) {
+            refreshTokenService.findByToken(refreshToken)
+                    .ifPresent(refreshTokenService::delete);
+        }
+
+        if (accessToken != null) {
+            blackListService.addToBlacklistToken(accessToken, jwtProvider.extractExpiration(accessToken));
+        }
+
+        Cookie cookie = new Cookie("access_token", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // Удаляем куки
+        response.addCookie(cookie);
+
+        Cookie refreshCookie = new Cookie("refresh_token", null);
+        refreshCookie.setPath("/");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0); // Удаляем куки
+        response.addCookie(refreshCookie);
+
+        return "login";
+    }
 }
