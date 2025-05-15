@@ -6,10 +6,6 @@
 </head>
 <body>
 
-<div th:if="${error}" style="color:red;">
-    <p th:text="${error}"></p>
-</div>
-
 <div class="container mt-5">
     <form  th:action="@{/api/auth/register}" method="post" class="mx-auto" style="max-width: 400px;">
         <fieldset class="p-4 border rounded-3 bg-light shadow-sm">
@@ -37,6 +33,9 @@
             </div>
             <div class="d-grid gap-2 mb-3">
                 <button type="submit" class="btn btn-primary py-2">Зарегистрироваться</button>
+            </div>
+            <div th:if="${error}" class="alert alert-dismissible alert-danger">
+                <strong>Ошибка:</strong> <span th:text="${error}"></span>
             </div>
         </fieldset>
     </form>

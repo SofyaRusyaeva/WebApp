@@ -55,6 +55,13 @@
         max-width: 100%;
         object-fit: contain;
         }
+        footer {
+            background-color: #f8f8f8;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #e1e1e1;
+        }
     </style>
 </head>
 <body>
@@ -115,12 +122,12 @@
 
             <div>
                 <label for="minPrice" class="form-label">Мин. цена:</label>
-                <input type="number" name="minPrice" id="minPrice" class="form-control">
+                <input type="number" name="minPrice" id="minPrice" class="form-control"  value="0" min="0">
             </div>
 
             <div>
                 <label for="maxPrice" class="form-label">Макс. цена:</label>
-                <input type="number" name="maxPrice" id="maxPrice" class="form-control">
+                <input type="number" name="maxPrice" id="maxPrice" class="form-control"  value="100000" min="0">
             </div>
 
             <button class="btn btn-outline-primary" type="submit">Применить</button>
@@ -155,7 +162,7 @@
 
                 <div class="mb-3">
                     <label for="new-price" class="form-label">Цена:</label>
-                    <input type="number" class="form-control" id="new-price" name="price" required>
+                    <input type="number" class="form-control" id="new-price" min="0" name="price" required>
                 </div>
 
                 <div class="mb-3">
@@ -260,7 +267,7 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Цена:</label>
-                        <input type="number" step="0.01" class="form-control" id="price" name="price" th:value="${product.price}" required>
+                        <input type="number" step="0.01" class="form-control" min="0" id="price" name="price" th:value="${product.price}" required>
                     </div>
 
                     <div class="d-flex gap-2">
@@ -273,6 +280,12 @@
     </div>
 </div>
 
+<footer>
+    <div class="content">
+        <p>© 2025 Silver Pear. Все права защищены.</p>
+        <p>Контакты: info@silverpear.ru | 8 (800) 555-35-35</p>
+    </div>
+</footer>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);

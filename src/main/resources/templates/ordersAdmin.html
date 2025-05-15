@@ -50,6 +50,13 @@
             margin: 1rem 0;
             border: 1px solid #000000;
         }
+        footer {
+            background-color: #f8f8f8;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #e1e1e1;
+        }
     </style>
 </head>
 <body>
@@ -105,12 +112,12 @@
 
             <div>
                 <label for="minPrice" class="form-label">Мин. цена:</label>
-                <input type="number" name="minPrice" id="minPrice" class="form-control">
+                <input type="number" name="minPrice" id="minPrice" class="form-control" min="0" value="0">
             </div>
 
             <div>
                 <label for="maxPrice" class="form-label">Макс. цена:</label>
-                <input type="number" name="maxPrice" id="maxPrice" class="form-control">
+                <input type="number" name="maxPrice" id="maxPrice" class="form-control" min="0" value="1000000">
             </div>
 
             <button class="btn btn-outline-primary" type="submit">Применить</button>
@@ -176,8 +183,85 @@
         <h4 class="text-center text-muted">Нет заказов</h4>
     </div>
 </div>
-
+<footer>
+    <div class="content">
+        <p>© 2025 Silver Pear. Все права защищены.</p>
+        <p>Контакты: info@silverpear.ru | 8 (800) 555-35-35</p>
+    </div>
+</footer>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('sortBy')) {
+        document.getElementById('sortBy').value = urlParams.get('sortBy');
+    }
+    if (urlParams.has('sortDirection')) {
+        document.getElementById('sortDirection').value = urlParams.get('sortDirection');
+    }
+
+    const selectedStatuses = urlParams.getAll('statuses');
+    document.querySelectorAll('input[name="statuses"]').forEach(checkbox => {
+        if (selectedStatuses.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+
+    if (urlParams.has('startDate')) {
+        document.getElementById('startDate').value = urlParams.get('startDate');
+    }
+    if (urlParams.has('endDate')) {
+        document.getElementById('endDate').value = urlParams.get('endDate');
+    }
+
+    if (urlParams.has('minPrice')) {
+        document.getElementById('minPrice').value = urlParams.get('minPrice');
+    }
+    if (urlParams.has('maxPrice')) {
+        document.getElementById('maxPrice').value = urlParams.get('maxPrice');
+    }
+
+    document.getElementById('filter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const params = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            if (params.has(key)) {
+                params.append(key, value);
+            } else {
+                params.set(key, value);
+            }
+        }
+
+        document.querySelectorAll('input[name="statuses"]:checked').forEach(cb => {
+            params.append('statuses', cb.value);
+        });
+
+        ['sortBy', 'sortDirection', 'startDate', 'endDate', 'minPrice', 'maxPrice'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.value) {
+                params.set(id, el.value);
+            }
+        });
+
+        history.pushState(null, '', '?' + params.toString());
+
+        fetch(window.location.pathname + '?' + params.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            document.querySelector('.orders-container').innerHTML = doc.querySelector('.orders-container').innerHTML;
+        })
+        .catch(error => console.error('Ошибка при загрузке заказов:', error));
+    });
+});
     function toggleOrderDetails(orderId) {
       const detailsDiv = document.getElementById(`order-details-${orderId}`);
 
