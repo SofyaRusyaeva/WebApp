@@ -45,9 +45,9 @@ public class Product {
     @JsonIgnore
     List<CartItem> cartItems;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonIgnore
-    List<OrderItem> orderItems;
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    List<OrderItem> orderItems;
 
 
     @JsonProperty("brandId")

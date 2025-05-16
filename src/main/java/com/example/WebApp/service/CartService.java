@@ -134,7 +134,9 @@ public class CartService {
     private OrderItem createOrderItem(Orders order, CartItem cartItem) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);
-        orderItem.setProduct(cartItem.getProduct());
+//        orderItem.setProduct(cartItem.getProduct());
+        orderItem.setTotalPrice(cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+        orderItem.setProductName(cartItem.getProduct().getName());
         orderItem.setQuantity(cartItem.getQuantity());
         return orderItem;
     }

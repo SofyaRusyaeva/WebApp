@@ -46,10 +46,12 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_item (
     order_item_id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+--    product_id BIGINT NOT NULL,
+    product_name VARCHAR(50) NOT NULL,
+    total_price NUMERIC(10,2) NOT NULL,
     quantity BIGINT NOT NULL,
-    CONSTRAINT fk_order_orderitem FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-    CONSTRAINT fk_product_orderitem FOREIGN KEY (product_id) REFERENCES product(product_id)
+    CONSTRAINT fk_order_orderitem FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+--    CONSTRAINT fk_product_orderitem FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
 CREATE TABLE IF NOT EXISTS cart_item (

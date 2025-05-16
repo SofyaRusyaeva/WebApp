@@ -61,9 +61,11 @@ public class Mapper {
     public ItemResponseDto toOrderItemResponse(OrderItem orderItem) {
         ItemResponseDto orderItemResponseDto = new ItemResponseDto();
         orderItemResponseDto.setQuantity(orderItem.getQuantity());
-        Product product = orderItem.getProduct();
-        orderItemResponseDto.setProductName(product.getName());
-        orderItemResponseDto.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+//        Product product = orderItem.getProduct();
+//        orderItemResponseDto.setProductName(product.getName());
+//        orderItemResponseDto.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+        orderItemResponseDto.setTotalPrice(orderItem.getTotalPrice());
+        orderItemResponseDto.setProductName(orderItem.getProductName());
         return orderItemResponseDto;
     }
 
