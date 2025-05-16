@@ -1,11 +1,9 @@
 package com.example.WebApp.controller;
 
-import com.example.WebApp.config.JwtProvider;
 import com.example.WebApp.dto.ItemResponseDto;
 import com.example.WebApp.model.OrderStatus;
 import com.example.WebApp.model.Orders;
 import com.example.WebApp.service.OrdersService;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,8 +30,8 @@ public class OrdersController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     public String findSortedAndFiltered(
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(defaultValue = "orderId") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
             @RequestParam(required = false) List<OrderStatus> statuses,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,

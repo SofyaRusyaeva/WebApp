@@ -29,10 +29,6 @@ public class OrdersService {
     JwtProvider jwtProvider;
 
 
-//    public List<Orders> findAll() {
-//        return ordersRepository.findAll();
-//    }
-
     public List<Orders> sortAndFilter(
             String sortBy, String sortDirection,
             List<OrderStatus> statuses,
@@ -91,22 +87,6 @@ public class OrdersService {
                 .collect(Collectors.toList());
     }
 
-//    public Orders findByOrderId(Long orderId) {
-//        return ordersRepository.findById(orderId)
-//                .orElseThrow(() -> new ObjectNotFoundException(String.format("Order %s not found", orderId)));
-//    }
-
-//    public Orders save(OrdersDto orderDto) {
-//        Users user = usersRepository.findById(orderDto.getUserId())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Orders order = mapper.toOrders(orderDto, user);
-//        try {
-//            return ordersRepository.save(order);
-//        } catch (Exception e) {
-//            throw new ObjectSaveException("Error saving order");
-//        }
-//    }
 
     public Orders update(OrderStatus status, Long id) {
         Orders oldOrder = ordersRepository.findById(id)
@@ -115,8 +95,4 @@ public class OrdersService {
 
         return ordersRepository.save(oldOrder);
     }
-
-//    public void delete(Long ordersId) {
-//        ordersRepository.deleteById(ordersId);
-//    }
 }
