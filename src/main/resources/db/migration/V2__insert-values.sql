@@ -41,6 +41,6 @@ INSERT INTO orders (user_id, total_price, date, status) VALUES (1, 2000, '2024-0
 --INSERT INTO order_item (order_id, product_id, quantity) VALUES (3, 1, 1);
 
 INSERT INTO order_item (order_id, product_name, total_price, quantity) VALUES (1, 'Lash Power Mascara', 17000, 10);
-INSERT INTO order_item (order_id, product_name, total_price, quantity) VALUES (1, 'Vitamino Color', 4860, 4);
+INSERT INTO order_item (order_id, product_name, total_price, quantity) VALUES (1, 'Vitamino Color', 4680, 4);
 INSERT INTO order_item (order_id, product_name, total_price, quantity) VALUES (2, 'Vitamino Color', 2340, 2);
 INSERT INTO order_item (order_id, product_name, total_price, quantity) VALUES (3, 'Almost lipstick', 2000, 1);

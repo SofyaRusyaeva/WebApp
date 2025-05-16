@@ -40,12 +40,6 @@ public class CartService {
                 .orElseThrow(()-> new ObjectNotFoundException("Cart not found"));
     }
 
-//    public List<ItemResponseDto> findByCartId(Long cartId) {
-//        return cartItemRepository.findByCart_CartId(cartId).stream()
-//                .map(mapper::toCartItemResponse)
-//                .collect(Collectors.toList());
-//    }
-
     public CartDto findMyCart() {
         Long userId= jwtProvider.getCurrentUserId();
         Cart cart = cartRepository.findByUser_UserId(userId)
@@ -67,22 +61,6 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-//    public Cart update(CartDto newCart, Long id) {
-//        Cart oldCart = cartRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Cart not found with id: " + id));
-//
-//        Users user = usersRepository.findById(newCart.getUserId())
-//                .orElseThrow(() -> new RuntimeException("User not found with id: " + newCart.getUserId()));
-//
-//        oldCart.setUser(user);
-//        oldCart.setTotalPrice(newCart.getTotalPrice());
-//
-//        return cartRepository.save(oldCart);
-//    }
-
-//    public void delete(Long cartId) {
-//        usersRepository.deleteById(cartId);
-//    }
 
     @Transactional
     public Orders createOrderFromCart() {
