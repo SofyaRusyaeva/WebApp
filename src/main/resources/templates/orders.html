@@ -44,7 +44,7 @@
                     <h4>Заказ #<span th:text="${order.orderId}"></span></h4>
                     <p><strong>Дата заказа:</strong> <span th:text="${order.date}"></span></p>
                     <p><strong>Статус:</strong> <span th:text="${order.status}"></span></p>
-                    <p><strong>Стоимость:</strong> <span th:text="${order.totalPrice}"></span></p>
+                    <p><strong>Сумма заказа:</strong> <span th:text="${order.totalPrice}"></span></p>
                 </div>
                 <button class="btn btn-outline-primary"
                         th:attr="onclick=|toggleOrderDetails(${order.orderId})|">Подробнее
@@ -88,7 +88,7 @@
                         html += `<li>
                             <strong>${item.productName}</strong>
                             — Кол-во: ${item.quantity},
-                            Цена: ${item.totalPrice}
+                            Стоимость: ${item.totalPrice}
                         </li>`;
                     });
                     html += '</ul>';

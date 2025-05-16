@@ -72,7 +72,7 @@
                 <select name="sortBy" id="sortBy" class="form-select">
                     <option value="date">дате</option>
                     <option value="orderId">id</option>
-                    <option value="price">цене</option>
+                    <option value="price">сумме</option>
                 </select>
             </div>
 
@@ -111,12 +111,12 @@
             </div>
 
             <div>
-                <label for="minPrice" class="form-label">Мин. цена:</label>
+                <label for="minPrice" class="form-label">Мин. сумма:</label>
                 <input type="number" name="minPrice" id="minPrice" class="form-control" min="0" value="0">
             </div>
 
             <div>
-                <label for="maxPrice" class="form-label">Макс. цена:</label>
+                <label for="maxPrice" class="form-label">Макс. сумма:</label>
                 <input type="number" name="maxPrice" id="maxPrice" class="form-control" min="0" value="1000000">
             </div>
 
@@ -131,7 +131,7 @@
                     <h4>Заказ #<span th:text="${order.orderId}"></span></h4>
                     <p><strong>Дата заказа:</strong> <span th:text="${order.date}"></span></p>
                     <p><strong>Статус:</strong> <span th:text="${order.status}"></span></p>
-                    <p><strong>Стоимость:</strong> <span th:text="${order.totalPrice}"></span></p>
+                    <p><strong>Сумма заказа:</strong> <span th:text="${order.totalPrice}"></span></p>
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-primary"
@@ -282,7 +282,7 @@
                           html += `<li>
                               <strong>${item.productName}</strong>
                               — Кол-во: ${item.quantity},
-                              Цена: ${item.totalPrice}
+                              Стоимость: ${item.totalPrice}
                           </li>`;
                       });
                       html += '</ul>';
